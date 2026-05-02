@@ -69,6 +69,44 @@
     }
     .nav-links a:hover { color: var(--gold); }
 
+    /* ─── INSIGHTS ─── */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    .insight-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.75rem 1.5rem;
+    }
+    .insight-num {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    .insight-card p {
+      font-size: 0.92rem;
+      color: var(--white);
+      line-height: 1.65;
+    }
+
+    @media (max-width: 860px) {
+      .insights-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── WAITLIST SLOTS ─── */
+    .form-note {
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
     /* ─── HERO ─── */
     #hero {
       min-height: 100vh;
@@ -493,7 +531,7 @@
   <a href="#hero" class="nav-logo">PROP<span>VEST</span></a>
   <ul class="nav-links">
     <li><a href="#tracker">Sector Watch</a></li>
-    <li><a href="#investor">Investors</a></li>
+    <li><a href="#waitlist">Early Access</a></li>
     <li><a href="#builder">Builders</a></li>
   </ul>
 </nav>
@@ -503,7 +541,7 @@
   <div class="hero-label">Live Sector Intelligence</div>
   <h1>New Gurgaon<br /><span>Investment Intelligence</span></h1>
   <p class="hero-sub">Data-first &nbsp;·&nbsp; Investor-only &nbsp;·&nbsp; Emerging sectors</p>
-  <a href="#tracker" class="btn-primary">View Investment Data</a>
+  <a href="#waitlist" class="btn-primary">Get Early Access</a>
   <p class="hero-ticker">Tracking New Gurgaon's emerging sectors — updated weekly</p>
 </section>
 
@@ -550,7 +588,7 @@
         <tr>
           <td class="td-sector">Sector 84</td>
           <td class="td-corridor">Dwarka Expressway</td>
-          <td class="td-price">₹12,000</td>
+          <td class="td-price">₹11,500–12,500</td>
           <td class="td-appr">+18%</td>
           <td class="td-yield">3.5%</td>
           <td><span class="risk-badge risk-medium">Medium</span></td>
@@ -558,7 +596,7 @@
         <tr>
           <td class="td-sector">Sector 113</td>
           <td class="td-corridor">Dwarka Expressway</td>
-          <td class="td-price">₹8,500</td>
+          <td class="td-price">₹8,000–9,000</td>
           <td class="td-appr">+22%</td>
           <td class="td-yield">4.0%</td>
           <td><span class="risk-badge risk-high">Medium-High</span></td>
@@ -566,7 +604,7 @@
         <tr>
           <td class="td-sector">Sector 71</td>
           <td class="td-corridor">SPR Corridor</td>
-          <td class="td-price">₹17,000</td>
+          <td class="td-price">₹16,500–17,500</td>
           <td class="td-appr">+13%</td>
           <td class="td-yield">4.2%</td>
           <td><span class="risk-badge risk-low">Low-Medium</span></td>
@@ -574,7 +612,7 @@
         <tr>
           <td class="td-sector">Sector 93–95</td>
           <td class="td-corridor">New Gurgaon</td>
-          <td class="td-price">₹5,500</td>
+          <td class="td-price">₹5,000–6,000</td>
           <td class="td-appr">+16%</td>
           <td class="td-yield">3.8%</td>
           <td><span class="risk-badge risk-medium">Medium</span></td>
@@ -582,7 +620,7 @@
         <tr>
           <td class="td-sector">Manesar GIC</td>
           <td class="td-corridor">KMP Expressway</td>
-          <td class="td-price">₹10,000</td>
+          <td class="td-price">₹9,500–10,500</td>
           <td class="td-appr">+20%</td>
           <td class="td-yield">4.5%</td>
           <td><span class="risk-badge risk-medium">Medium</span></td>
@@ -590,70 +628,64 @@
       </tbody>
     </table>
   </div>
-  <p class="disclaimer">Data sourced from market reports and transaction data. Updated monthly. Not financial advice.</p>
+  <p class="disclaimer">Data based on market observations, listings, and reported transactions. For informational purposes only.</p>
+  <p class="disclaimer" style="margin-top:0.5rem; color: var(--gold); opacity: 0.75;">Full dataset unlocks on launch.</p>
 </section>
 
-<!-- ─── INVESTOR FORM ─── -->
-<section id="investor">
-  <div class="section-tag">For Investors</div>
-  <h2 class="section-heading">Get Curated Investment Options</h2>
-  <p class="section-sub">Tell us your goal. We'll show you the top 3 projects that match.</p>
+<!-- ─── THIS WEEK'S INSIGHTS ─── -->
+<section id="insights">
+  <div class="section-tag">This Week's Insights</div>
+  <h2 class="section-heading">Market Observations</h2>
+  <p class="section-sub">Patterns worth tracking in New Gurgaon's emerging sectors</p>
+  <div class="divider"></div>
+
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-num">01</div>
+      <p>Sector 113 increased ~₹800/sqft in recent months due to Dwarka Expressway progress</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">02</div>
+      <p>SPR corridor showing stronger rental stability vs appreciation-led sectors</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">03</div>
+      <p>Manesar GIC behaving like early-stage Dwarka Expressway — high risk, high upside</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── WAITLIST FORM ─── -->
+<section id="waitlist">
+  <div class="section-tag">Early Access</div>
+  <h2 class="section-heading">Get Early Access to Full Dataset</h2>
+  <p class="section-sub">Be notified when the complete New Gurgaon sector dataset goes live.</p>
   <div class="divider"></div>
 
   <div class="form-card">
-    <form id="investorForm" novalidate>
+    <form id="waitlistForm" novalidate>
       <div class="form-grid">
         <div>
-          <label for="inv-name">Full Name</label>
-          <input type="text" id="inv-name" placeholder="Rahul Sharma" />
-          <div class="field-error" id="inv-name-err">Name is required.</div>
+          <label for="wl-name">Name</label>
+          <input type="text" id="wl-name" placeholder="Rahul Sharma" />
+          <div class="field-error" id="wl-name-err">Name is required.</div>
         </div>
         <div>
-          <label for="inv-phone">Phone Number</label>
-          <input type="tel" id="inv-phone" placeholder="+91 98765 43210" />
-          <div class="field-error" id="inv-phone-err">Valid phone number required.</div>
-        </div>
-        <div>
-          <label for="inv-budget">Investment Budget</label>
-          <select id="inv-budget">
-            <option value="" disabled selected>Select budget</option>
-            <option>Under Rs.50 Lakh</option>
-            <option>Rs.50L – Rs.1 Crore</option>
-            <option>Rs.1 Crore – Rs.3 Crore</option>
-            <option>Above Rs.3 Crore</option>
-          </select>
-          <div class="field-error" id="inv-budget-err">Please select a budget.</div>
-        </div>
-        <div>
-          <label for="inv-timeline">Investment Timeline</label>
-          <select id="inv-timeline">
-            <option value="" disabled selected>Select timeline</option>
-            <option>1 Year</option>
-            <option>3 Years</option>
-            <option>5+ Years</option>
-          </select>
-          <div class="field-error" id="inv-timeline-err">Please select a timeline.</div>
+          <label for="wl-phone">Phone Number</label>
+          <input type="tel" id="wl-phone" placeholder="+91 98765 43210" />
+          <div class="field-error" id="wl-phone-err">Valid phone number required.</div>
         </div>
         <div class="full">
-          <label for="inv-goal">Primary Goal</label>
-          <select id="inv-goal">
-            <option value="" disabled selected>Select your primary goal</option>
-            <option>Capital Appreciation</option>
-            <option>Rental Yield</option>
-            <option>Both</option>
-          </select>
-          <div class="field-error" id="inv-goal-err">Please select a goal.</div>
-        </div>
-        <div class="full">
-          <button type="submit" class="btn-gold">Get My Top 3 Projects</button>
+          <button type="submit" class="btn-gold">Get Early Access</button>
         </div>
       </div>
     </form>
+    <p class="form-note">Limited early access slots available.</p>
 
-    <div class="success-msg" id="investorSuccess">
+    <div class="success-msg" id="waitlistSuccess">
       <div class="success-icon">✦</div>
-      <p>We'll reach out within 24 hours with your curated project list.</p>
-      <small>Our team reviews every submission personally — no automation.</small>
+      <p>You're on the early access list.</p>
+      <small>We'll notify you when the dataset goes live.</small>
     </div>
   </div>
 </section>
@@ -661,8 +693,8 @@
 <!-- ─── BUILDER FORM ─── -->
 <section id="builder">
   <div class="section-tag">For Developers &amp; Builders</div>
-  <h2 class="section-heading">Are You a Developer or Builder?</h2>
-  <p class="section-sub">List your project for free. Reach qualified investors actively looking in New Gurgaon.</p>
+  <h2 class="section-heading">Access Qualified Investor Demand</h2>
+  <p class="section-sub">List your project to reach investors actively tracking New Gurgaon sectors.</p>
   <div class="divider"></div>
 
   <div class="form-card">
@@ -701,8 +733,8 @@
 
     <div class="success-msg" id="builderSuccess">
       <div class="success-icon">✦</div>
-      <p>Thank you. We'll review your project and reach out within 48 hours.</p>
-      <small>Only projects matching investor criteria will be listed.</small>
+      <p>Project details received.</p>
+      <small>Your listing will be reviewed and added to the dataset if it fits the tracked criteria.</small>
     </div>
   </div>
 </section>
@@ -725,17 +757,15 @@
     </div>
   </div>
   <div class="footer-bottom">
-    Data for informational purposes only. Not financial advice. All investments carry risk.<br />
+    Data based on market observations, listings, and reported transactions. For informational purposes only. All investments carry risk.<br />
     © 2026 PropVest. All rights reserved.
   </div>
 </footer>
 
 <script>
-  /* ── helpers ── */
   function isValidPhone(v) {
     return /^[\+]?[\d\s\-\(\)]{8,15}$/.test(v.trim());
   }
-
   function showErr(id, errId) {
     document.getElementById(id).classList.add('error');
     document.getElementById(errId).classList.add('show');
@@ -744,51 +774,39 @@
     document.getElementById(id).classList.remove('error');
     document.getElementById(errId).classList.remove('show');
   }
+  function saveToStorage(key, obj) {
+    const list = JSON.parse(localStorage.getItem(key) || '[]');
+    list.push(obj);
+    localStorage.setItem(key, JSON.stringify(list));
+  }
 
-  /* ── investor form ── */
-  document.getElementById('investorForm').addEventListener('submit', function(e) {
+  /* ── waitlist form ── */
+  document.getElementById('waitlistForm').addEventListener('submit', function(e) {
     e.preventDefault();
     let ok = true;
-
     const fields = [
-      { id: 'inv-name',     err: 'inv-name-err',     check: v => v.trim().length > 1 },
-      { id: 'inv-phone',    err: 'inv-phone-err',    check: isValidPhone },
-      { id: 'inv-budget',   err: 'inv-budget-err',   check: v => v !== '' },
-      { id: 'inv-timeline', err: 'inv-timeline-err', check: v => v !== '' },
-      { id: 'inv-goal',     err: 'inv-goal-err',     check: v => v !== '' },
+      { id: 'wl-name',  err: 'wl-name-err',  check: v => v.trim().length > 1 },
+      { id: 'wl-phone', err: 'wl-phone-err', check: isValidPhone },
     ];
-
     fields.forEach(f => {
       const val = document.getElementById(f.id).value;
       if (!f.check(val)) { showErr(f.id, f.err); ok = false; }
       else clearErr(f.id, f.err);
     });
-
     if (!ok) return;
-
-    const data = {
-      type: 'investor',
-      name: document.getElementById('inv-name').value.trim(),
-      phone: document.getElementById('inv-phone').value.trim(),
-      budget: document.getElementById('inv-budget').value,
-      timeline: document.getElementById('inv-timeline').value,
-      goal: document.getElementById('inv-goal').value,
+    saveToStorage('propvest_waitlist', {
+      name: document.getElementById('wl-name').value.trim(),
+      phone: document.getElementById('wl-phone').value.trim(),
       ts: new Date().toISOString(),
-    };
-
-    const saved = JSON.parse(localStorage.getItem('propvest_leads') || '[]');
-    saved.push(data);
-    localStorage.setItem('propvest_leads', JSON.stringify(saved));
-
+    });
     this.style.display = 'none';
-    document.getElementById('investorSuccess').style.display = 'block';
+    document.getElementById('waitlistSuccess').style.display = 'block';
   });
 
   /* ── builder form ── */
   document.getElementById('builderForm').addEventListener('submit', function(e) {
     e.preventDefault();
     let ok = true;
-
     const fields = [
       { id: 'bld-company', err: 'bld-company-err', check: v => v.trim().length > 1 },
       { id: 'bld-contact', err: 'bld-contact-err', check: v => v.trim().length > 1 },
@@ -796,34 +814,25 @@
       { id: 'bld-project', err: 'bld-project-err', check: v => v.trim().length > 1 },
       { id: 'bld-sector',  err: 'bld-sector-err',  check: v => v.trim().length > 1 },
     ];
-
     fields.forEach(f => {
       const val = document.getElementById(f.id).value;
       if (!f.check(val)) { showErr(f.id, f.err); ok = false; }
       else clearErr(f.id, f.err);
     });
-
     if (!ok) return;
-
-    const data = {
-      type: 'builder',
+    saveToStorage('propvest_builders', {
       company: document.getElementById('bld-company').value.trim(),
       contact: document.getElementById('bld-contact').value.trim(),
       phone: document.getElementById('bld-phone').value.trim(),
       project: document.getElementById('bld-project').value.trim(),
       sector: document.getElementById('bld-sector').value.trim(),
       ts: new Date().toISOString(),
-    };
-
-    const saved = JSON.parse(localStorage.getItem('propvest_leads') || '[]');
-    saved.push(data);
-    localStorage.setItem('propvest_leads', JSON.stringify(saved));
-
+    });
     this.style.display = 'none';
     document.getElementById('builderSuccess').style.display = 'block';
   });
 
-  /* ── live validation: clear error on input ── */
+  /* ── clear field error on input ── */
   document.querySelectorAll('input, select').forEach(el => {
     el.addEventListener('input', function() {
       this.classList.remove('error');
