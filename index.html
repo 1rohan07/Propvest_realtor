@@ -1,146 +1,845 @@
-<!-- HERO UPDATED -->
-<div class="container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PropVest — New Gurgaon Investment Intelligence</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <!-- HERO -->
-  <h1>New Gurgaon Investment Intelligence</h1>
+    :root {
+      --navy:    #0D1B2A;
+      --card:    #1A2B3C;
+      --gold:    #C9A84C;
+      --gold-dim:#a68a36;
+      --white:   #FFFFFF;
+      --muted:   #AAAAAA;
+      --red:     #E05252;
+      --border:  rgba(201,168,76,0.25);
+    }
 
-  <p><strong>Understand where to invest before price movement becomes obvious.</strong></p>
+    html { scroll-behavior: smooth; }
 
-  <p>
-    Sector-level signals, demand shifts, and early-stage opportunities — 
-    helping investors make smarter entry decisions in New Gurgaon.
-  </p>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      line-height: 1.6;
+      font-size: 16px;
+    }
 
-  <a href="#invest" class="cta">Explore Investment Options</a>
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 64px;
+      background: rgba(13,27,42,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
 
-  <p class="small">Built for investors actively looking to deploy capital in New Gurgaon</p>
+    .nav-logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
 
-  <!-- MINI PREVIEW (NEW - VERY IMPORTANT) -->
-  <div class="card">
-    <strong>Current Market Signals</strong>
-    <p>Sector 84 → Early Entry Zone</p>
-    <p>Sector 113 → Late Entry Risk</p>
-    <p>SPR → Stable Rental Play</p>
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ─── INSIGHTS ─── */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    .insight-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.75rem 1.5rem;
+    }
+    .insight-num {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    .insight-card p {
+      font-size: 0.92rem;
+      color: var(--white);
+      line-height: 1.65;
+    }
+
+    @media (max-width: 860px) {
+      .insights-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── WAITLIST SLOTS ─── */
+    .form-note {
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 5% 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,168,76,0.07) 0%, transparent 70%),
+        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(201,168,76,0.04) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(201,168,76,0.04) 40px);
+      pointer-events: none;
+    }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(201,168,76,0.12);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 2px;
+      margin-bottom: 2rem;
+    }
+    .hero-label::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    h1 {
+      font-size: clamp(2.2rem, 6vw, 4.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      max-width: 820px;
+      margin-bottom: 1.25rem;
+    }
+    h1 span { color: var(--gold); }
+
+    .hero-sub {
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 2.5rem;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.85rem 2.2rem;
+      border-radius: 3px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #d4b562; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .hero-ticker {
+      margin-top: 3.5rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* ─── STATS BAR ─── */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(26,43,60,0.6);
+    }
+    .stat-item {
+      flex: 1 1 160px;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--gold);
+      display: block;
+    }
+    .stat-lbl {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 90px 5%; }
+    section + section { padding-top: 60px; }
+
+    .section-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+    }
+    .section-heading {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ─── TABLE ─── */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+      font-size: 0.88rem;
+    }
+    thead tr {
+      background: rgba(201,168,76,0.15);
+      border-bottom: 1px solid var(--gold);
+    }
+    thead th {
+      padding: 1rem 1.2rem;
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.15s;
+    }
+    tbody tr:nth-child(even) { background: rgba(26,43,60,0.5); }
+    tbody tr:hover { background: rgba(201,168,76,0.08); }
+    tbody td {
+      padding: 0.95rem 1.2rem;
+      color: var(--white);
+      white-space: nowrap;
+    }
+    .td-sector { font-weight: 600; }
+    .td-corridor { color: var(--muted); font-size: 0.82rem; }
+    .td-price { font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+    .td-appr { color: #5ddba8; font-weight: 600; }
+    .td-yield { color: #7db8f7; font-weight: 600; }
+
+    .risk-badge {
+      display: inline-block;
+      padding: 0.18rem 0.65rem;
+      border-radius: 2px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .risk-low    { background: rgba(93,219,168,0.15); color:#5ddba8; border:1px solid rgba(93,219,168,0.3); }
+    .risk-medium { background: rgba(201,168,76,0.15); color:var(--gold); border:1px solid var(--border); }
+    .risk-high   { background: rgba(224,82,82,0.15);  color:#E05252; border:1px solid rgba(224,82,82,0.3); }
+
+    .disclaimer {
+      margin-top: 1rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* ─── FORMS ─── */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2.5rem 2rem;
+      max-width: 620px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem 1.5rem;
+    }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    input, select {
+      width: 100%;
+      background: rgba(13,27,42,0.8);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    input::placeholder { color: rgba(170,170,170,0.5); }
+    input:focus, select:focus { border-color: var(--gold); }
+    input.error, select.error { border-color: var(--red); }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23AAAAAA' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.85rem center; padding-right: 2.2rem; }
+    select option { background: var(--card); }
+
+    .field-error {
+      font-size: 0.72rem;
+      color: var(--red);
+      margin-top: 0.3rem;
+      display: none;
+    }
+    .field-error.show { display: block; }
+
+    .btn-gold {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      border-radius: 3px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s, transform 0.15s;
+      margin-top: 0.5rem;
+    }
+    .btn-gold:hover { background: #d4b562; transform: translateY(-1px); }
+    .btn-gold:active { transform: translateY(0); }
+
+    .btn-outline {
+      display: inline-block;
+      background: transparent;
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.82rem 2rem;
+      border-radius: 3px;
+      border: 1.5px solid var(--gold);
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s, color 0.2s, transform 0.15s;
+      margin-top: 0.5rem;
+    }
+    .btn-outline:hover { background: rgba(201,168,76,0.12); transform: translateY(-1px); }
+    .btn-outline:active { transform: translateY(0); }
+
+    .success-msg {
+      display: none;
+      background: rgba(201,168,76,0.1);
+      border: 1px solid var(--gold);
+      border-radius: 4px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .success-msg .success-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    .success-msg p {
+      color: var(--gold);
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .success-msg small {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 0.4rem;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 5%;
+    }
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .footer-brand .logo {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--white);
+    }
+    .footer-brand .logo span { color: var(--gold); }
+    .footer-brand p {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 0.4rem;
+    }
+    .footer-mid {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    .footer-right { text-align: right; }
+    .footer-right a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .footer-right a:hover { color: #d4b562; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 1.2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.03em;
+      line-height: 1.8;
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      width: 48px;
+      height: 2px;
+      background: var(--gold);
+      margin-bottom: 1.8rem;
+    }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 720px) {
+      nav { padding: 0 4%; }
+      .nav-links { display: none; }
+
+      section { padding: 70px 4%; }
+      section + section { padding-top: 40px; }
+
+      .stats-bar { gap: 0; }
+      .stat-item { flex: 1 1 50%; border-bottom: 1px solid var(--border); }
+      .stat-item:nth-child(even) { border-right: none; }
+
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: 1; }
+
+      .form-card { padding: 1.75rem 1.25rem; }
+
+      .footer-top { flex-direction: column; }
+      .footer-right { text-align: left; }
+      .footer-mid { text-align: left; }
+
+      table { font-size: 0.82rem; }
+      thead th, tbody td { padding: 0.8rem 0.9rem; }
+    }
+
+    @media (max-width: 440px) {
+      h1 { font-size: 2rem; }
+      .btn-primary { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <a href="#hero" class="nav-logo">PROP<span>VEST</span></a>
+  <ul class="nav-links">
+    <li><a href="#tracker">Sector Watch</a></li>
+    <li><a href="#waitlist">Early Access</a></li>
+    <li><a href="#builder">Builders</a></li>
+  </ul>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-label">Live Sector Intelligence</div>
+  <h1>New Gurgaon<br /><span>Investment Intelligence</span></h1>
+  <p class="hero-sub">Data-first &nbsp;·&nbsp; Investor-only &nbsp;·&nbsp; Emerging sectors</p>
+  <a href="#waitlist" class="btn-primary">Get Early Access</a>
+  <p class="hero-ticker">Tracking New Gurgaon's emerging sectors — updated weekly</p>
+</section>
+
+<!-- ─── STATS BAR ─── -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-val">5</span>
+    <span class="stat-lbl">Tracked Sectors</span>
   </div>
-
-  <!-- WHAT YOU GET -->
-  <div class="section">
-    <h2>How PropVest Helps You Invest</h2>
-
-    <div class="card">
-      <strong>Market Clarity</strong>
-      <p>Understand which sectors are early-stage vs already saturated.</p>
-    </div>
-
-    <div class="card">
-      <strong>Investment Direction</strong>
-      <p>Know where to allocate capital based on demand and price signals.</p>
-    </div>
-
-    <div class="card">
-      <strong>Access to Opportunities</strong>
-      <p>Get access to relevant projects once validated and aligned with your goals.</p>
-    </div>
+  <div class="stat-item">
+    <span class="stat-val">22%</span>
+    <span class="stat-lbl">Peak 3yr Appreciation</span>
   </div>
+  <div class="stat-item">
+    <span class="stat-val">4.5%</span>
+    <span class="stat-lbl">Peak Rental Yield</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-val">100%</span>
+    <span class="stat-lbl">Investor Focus</span>
+  </div>
+</div>
 
-  <!-- DATA TABLE -->
-  <div class="section">
-    <h2>New Gurgaon Sector Snapshot</h2>
-    <p>Tracking emerging sectors across Dwarka Expressway, SPR & New Gurgaon</p>
+<!-- ─── PRICE TRACKER ─── -->
+<section id="tracker">
+  <div class="section-tag">Sector Watch</div>
+  <h2 class="section-heading">New Gurgaon Sector Watch</h2>
+  <p class="section-sub">Last updated: May 2026</p>
+  <div class="divider"></div>
 
+  <div class="table-wrap">
     <table>
-      <tr>
-        <th>Sector</th>
-        <th>Price Range</th>
-        <th>Trend</th>
-        <th>Investment Signal</th>
-      </tr>
-      <tr>
-        <td>Sector 84</td>
-        <td>₹11,500–12,500</td>
-        <td>↑</td>
-        <td>Early Entry Zone</td>
-      </tr>
-      <tr>
-        <td>Sector 113</td>
-        <td>₹8,000–9,000</td>
-        <td>↑↑</td>
-        <td>Late Entry Risk</td>
-      </tr>
-      <tr>
-        <td>SPR Corridor</td>
-        <td>₹16,000–17,000</td>
-        <td>→</td>
-        <td>Rental Yield Play</td>
-      </tr>
-      <tr>
-        <td>Sector 93–95</td>
-        <td>₹5,000–6,000</td>
-        <td>↑</td>
-        <td>Affordable Growth</td>
-      </tr>
+      <thead>
+        <tr>
+          <th>Sector</th>
+          <th>Corridor</th>
+          <th>Price / sqft</th>
+          <th>3yr Appreciation</th>
+          <th>Rental Yield</th>
+          <th>Risk Level</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-sector">Sector 84</td>
+          <td class="td-corridor">Dwarka Expressway</td>
+          <td class="td-price">₹11,500–12,500</td>
+          <td class="td-appr">+18%</td>
+          <td class="td-yield">3.5%</td>
+          <td><span class="risk-badge risk-medium">Medium</span></td>
+        </tr>
+        <tr>
+          <td class="td-sector">Sector 113</td>
+          <td class="td-corridor">Dwarka Expressway</td>
+          <td class="td-price">₹8,000–9,000</td>
+          <td class="td-appr">+22%</td>
+          <td class="td-yield">4.0%</td>
+          <td><span class="risk-badge risk-high">Medium-High</span></td>
+        </tr>
+        <tr>
+          <td class="td-sector">Sector 71</td>
+          <td class="td-corridor">SPR Corridor</td>
+          <td class="td-price">₹16,500–17,500</td>
+          <td class="td-appr">+13%</td>
+          <td class="td-yield">4.2%</td>
+          <td><span class="risk-badge risk-low">Low-Medium</span></td>
+        </tr>
+        <tr>
+          <td class="td-sector">Sector 93–95</td>
+          <td class="td-corridor">New Gurgaon</td>
+          <td class="td-price">₹5,000–6,000</td>
+          <td class="td-appr">+16%</td>
+          <td class="td-yield">3.8%</td>
+          <td><span class="risk-badge risk-medium">Medium</span></td>
+        </tr>
+        <tr>
+          <td class="td-sector">Manesar GIC</td>
+          <td class="td-corridor">KMP Expressway</td>
+          <td class="td-price">₹9,500–10,500</td>
+          <td class="td-appr">+20%</td>
+          <td class="td-yield">4.5%</td>
+          <td><span class="risk-badge risk-medium">Medium</span></td>
+        </tr>
+      </tbody>
     </table>
   </div>
+  <p class="disclaimer">Data based on market observations, listings, and reported transactions. For informational purposes only.</p>
+  <p class="disclaimer" style="margin-top:0.5rem; color: var(--gold); opacity: 0.75;">Full dataset unlocks on launch.</p>
+</section>
 
-  <!-- INSIGHTS -->
-  <div class="section">
-    <h2>This Week’s Insights</h2>
+<!-- ─── THIS WEEK'S INSIGHTS ─── -->
+<section id="insights">
+  <div class="section-tag">This Week's Insights</div>
+  <h2 class="section-heading">Market Observations</h2>
+  <p class="section-sub">Patterns worth tracking in New Gurgaon's emerging sectors</p>
+  <div class="divider"></div>
 
-    <div class="card">
-      <strong>Sector 113</strong>
-      <p>~₹800/sqft increase driven by Dwarka Expressway progress</p>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-num">01</div>
+      <p>Sector 113 increased ~₹800/sqft in recent months due to Dwarka Expressway progress</p>
     </div>
-
-    <div class="card">
-      <strong>SPR Corridor</strong>
-      <p>Stronger rental stability vs appreciation-focused sectors</p>
+    <div class="insight-card">
+      <div class="insight-num">02</div>
+      <p>SPR corridor showing stronger rental stability vs appreciation-led sectors</p>
     </div>
-
-    <div class="card">
-      <strong>Manesar GIC</strong>
-      <p>Early-stage growth — high risk, high upside potential</p>
+    <div class="insight-card">
+      <div class="insight-num">03</div>
+      <p>Manesar GIC behaving like early-stage Dwarka Expressway — high risk, high upside</p>
     </div>
   </div>
+</section>
 
-  <!-- INVEST SECTION (REPLACES WAITLIST) -->
-  <div class="section" id="invest">
-    <h2>Explore Investment Options with PropVest</h2>
+<!-- ─── WAITLIST FORM ─── -->
+<section id="waitlist">
+  <div class="section-tag">Early Access</div>
+  <h2 class="section-heading">Get Early Access to Full Dataset</h2>
+  <p class="section-sub">Be notified when the complete New Gurgaon sector dataset goes live.</p>
+  <div class="divider"></div>
 
-    <p>
-      Share your investment range and goals. Based on market signals, we’ll guide you 
-      toward relevant opportunities in New Gurgaon.
-    </p>
+  <div class="form-card">
+    <form id="waitlistForm" novalidate>
+      <div class="form-grid">
+        <div>
+          <label for="wl-name">Name</label>
+          <input type="text" id="wl-name" placeholder="Rahul Sharma" />
+          <div class="field-error" id="wl-name-err">Name is required.</div>
+        </div>
+        <div>
+          <label for="wl-phone">Phone Number</label>
+          <input type="tel" id="wl-phone" placeholder="+91 98765 43210" />
+          <div class="field-error" id="wl-phone-err">Valid phone number required.</div>
+        </div>
+        <div class="full">
+          <button type="submit" class="btn-gold">Get Early Access</button>
+        </div>
+      </div>
+    </form>
+    <p class="form-note">Limited early access slots available.</p>
 
-    <form onsubmit="handleSubmit(event)">
-      <input type="text" placeholder="Your Name" required />
-      <input type="tel" placeholder="Phone Number" required />
-      <input type="text" placeholder="Investment Budget (e.g. 1–2 Cr)" required />
-      <button type="submit">Get Investment Guidance</button>
+    <div class="success-msg" id="waitlistSuccess">
+      <div class="success-icon">✦</div>
+      <p>You're on the early access list.</p>
+      <small>We'll notify you when the dataset goes live.</small>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BUILDER FORM ─── -->
+<section id="builder">
+  <div class="section-tag">For Developers &amp; Builders</div>
+  <h2 class="section-heading">Access Qualified Investor Demand</h2>
+  <p class="section-sub">List your project to reach investors actively tracking New Gurgaon sectors.</p>
+  <div class="divider"></div>
+
+  <div class="form-card">
+    <form id="builderForm" novalidate>
+      <div class="form-grid">
+        <div>
+          <label for="bld-company">Company Name</label>
+          <input type="text" id="bld-company" placeholder="Prestige Group" />
+          <div class="field-error" id="bld-company-err">Company name is required.</div>
+        </div>
+        <div>
+          <label for="bld-contact">Contact Person Name</label>
+          <input type="text" id="bld-contact" placeholder="Anita Kapoor" />
+          <div class="field-error" id="bld-contact-err">Contact name is required.</div>
+        </div>
+        <div>
+          <label for="bld-phone">Phone Number</label>
+          <input type="tel" id="bld-phone" placeholder="+91 98765 43210" />
+          <div class="field-error" id="bld-phone-err">Valid phone number required.</div>
+        </div>
+        <div>
+          <label for="bld-project">Project Name</label>
+          <input type="text" id="bld-project" placeholder="Prestige Residences" />
+          <div class="field-error" id="bld-project-err">Project name is required.</div>
+        </div>
+        <div class="full">
+          <label for="bld-sector">Sector / Location</label>
+          <input type="text" id="bld-sector" placeholder="Sector 84, Dwarka Expressway" />
+          <div class="field-error" id="bld-sector-err">Sector / Location is required.</div>
+        </div>
+        <div class="full">
+          <button type="submit" class="btn-outline">List My Project</button>
+        </div>
+      </div>
     </form>
 
-    <p class="small">We focus only on serious investors evaluating New Gurgaon</p>
-
-    <p class="small" id="successMessage" style="display:none; color:#C9A84C;">
-      Thanks — we’ll reach out with relevant insights and opportunities.
-    </p>
+    <div class="success-msg" id="builderSuccess">
+      <div class="success-icon">✦</div>
+      <p>Project details received.</p>
+      <small>Your listing will be reviewed and added to the dataset if it fits the tracked criteria.</small>
+    </div>
   </div>
+</section>
 
-  <!-- BUILDER -->
-  <div class="section">
-    <h2>Access Qualified Investor Demand</h2>
-    <p>List your project to reach investors actively tracking New Gurgaon sectors.</p>
-
-    <form>
-      <input type="text" placeholder="Company Name" required />
-      <input type="text" placeholder="Project Name" required />
-      <input type="tel" placeholder="Phone Number" required />
-      <button type="submit">Submit</button>
-    </form>
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo">PROP<span>VEST</span></div>
+      <p>New Gurgaon Investment Intelligence</p>
+    </div>
+    <div class="footer-mid">
+      <p>Tracking New Gurgaon's emerging sectors weekly</p>
+    </div>
+    <div class="footer-right">
+      <a href="https://instagram.com/PropVest_Realtor" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        @PropVest_Realtor
+      </a>
+    </div>
   </div>
-
-  <!-- FOOTER -->
-  <div class="footer">
-    Data based on market observations, listings, and reported transactions. For informational purposes only.
+  <div class="footer-bottom">
+    Data based on market observations, listings, and reported transactions. For informational purposes only. All investments carry risk.<br />
+    © 2026 PropVest. All rights reserved.
   </div>
+</footer>
 
-</div>
+<script>
+  function isValidPhone(v) {
+    return /^[\+]?[\d\s\-\(\)]{8,15}$/.test(v.trim());
+  }
+  function showErr(id, errId) {
+    document.getElementById(id).classList.add('error');
+    document.getElementById(errId).classList.add('show');
+  }
+  function clearErr(id, errId) {
+    document.getElementById(id).classList.remove('error');
+    document.getElementById(errId).classList.remove('show');
+  }
+  function saveToStorage(key, obj) {
+    const list = JSON.parse(localStorage.getItem(key) || '[]');
+    list.push(obj);
+    localStorage.setItem(key, JSON.stringify(list));
+  }
+
+  /* ── waitlist form ── */
+  document.getElementById('waitlistForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let ok = true;
+    const fields = [
+      { id: 'wl-name',  err: 'wl-name-err',  check: v => v.trim().length > 1 },
+      { id: 'wl-phone', err: 'wl-phone-err', check: isValidPhone },
+    ];
+    fields.forEach(f => {
+      const val = document.getElementById(f.id).value;
+      if (!f.check(val)) { showErr(f.id, f.err); ok = false; }
+      else clearErr(f.id, f.err);
+    });
+    if (!ok) return;
+    saveToStorage('propvest_waitlist', {
+      name: document.getElementById('wl-name').value.trim(),
+      phone: document.getElementById('wl-phone').value.trim(),
+      ts: new Date().toISOString(),
+    });
+    this.style.display = 'none';
+    document.getElementById('waitlistSuccess').style.display = 'block';
+  });
+
+  /* ── builder form ── */
+  document.getElementById('builderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let ok = true;
+    const fields = [
+      { id: 'bld-company', err: 'bld-company-err', check: v => v.trim().length > 1 },
+      { id: 'bld-contact', err: 'bld-contact-err', check: v => v.trim().length > 1 },
+      { id: 'bld-phone',   err: 'bld-phone-err',   check: isValidPhone },
+      { id: 'bld-project', err: 'bld-project-err', check: v => v.trim().length > 1 },
+      { id: 'bld-sector',  err: 'bld-sector-err',  check: v => v.trim().length > 1 },
+    ];
+    fields.forEach(f => {
+      const val = document.getElementById(f.id).value;
+      if (!f.check(val)) { showErr(f.id, f.err); ok = false; }
+      else clearErr(f.id, f.err);
+    });
+    if (!ok) return;
+    saveToStorage('propvest_builders', {
+      company: document.getElementById('bld-company').value.trim(),
+      contact: document.getElementById('bld-contact').value.trim(),
+      phone: document.getElementById('bld-phone').value.trim(),
+      project: document.getElementById('bld-project').value.trim(),
+      sector: document.getElementById('bld-sector').value.trim(),
+      ts: new Date().toISOString(),
+    });
+    this.style.display = 'none';
+    document.getElementById('builderSuccess').style.display = 'block';
+  });
+
+  /* ── clear field error on input ── */
+  document.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('input', function() {
+      this.classList.remove('error');
+      const errEl = document.getElementById(this.id + '-err');
+      if (errEl) errEl.classList.remove('show');
+    });
+  });
+</script>
+</body>
+</html>
