@@ -417,6 +417,25 @@
     input:focus { border-color: var(--gold); }
     input.error { border-color: var(--red); }
 
+    select {
+      width: 100%;
+      background: rgba(13,27,42,0.8);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+    }
+    select:focus { border-color: var(--gold); }
+    select.error { border-color: var(--red); }
+    select option { background: #1A2B3C; color: var(--white); }
+
     .field-error {
       font-size: 0.72rem;
       color: var(--red);
@@ -468,6 +487,55 @@
       font-size: 0.73rem;
       color: var(--muted);
       letter-spacing: 0.03em;
+    }
+    .early-close {
+      margin-top: 0.5rem;
+      font-size: 0.73rem;
+      color: var(--gold);
+      letter-spacing: 0.03em;
+    }
+    .form-err { margin-top: 0.8rem; text-align: center; }
+
+    .launch-context {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2rem;
+      max-width: 620px;
+      margin-top: 1.5rem;
+    }
+    .launch-context .launch-heading {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.8rem;
+    }
+    .launch-context p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      line-height: 1.6;
+    }
+    .launch-context .launch-sub,
+    .launch-context .launch-date { color: var(--gold); font-weight: 600; }
+    .launch-context ul {
+      list-style: none;
+      margin: 0.4rem 0 0.6rem;
+      padding: 0;
+    }
+    .launch-context ul li {
+      font-size: 0.88rem;
+      color: var(--white);
+      padding: 0.2rem 0 0.2rem 1.2rem;
+      position: relative;
+      line-height: 1.5;
+    }
+    .launch-context ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      font-size: 0.8rem;
     }
 
     .success-msg {
@@ -751,21 +819,54 @@
         </div>
         <div class="full">
           <label for="inv-budget">Investment Budget</label>
-          <input type="text" id="inv-budget" placeholder="e.g. ₹50L – ₹1 Crore" />
-          <div class="field-error" id="inv-budget-err">Please share your approximate budget.</div>
+          <select id="inv-budget">
+            <option value="">Select your budget</option>
+            <option value="Under ₹1Cr">Under ₹1Cr</option>
+            <option value="₹1Cr – ₹3Cr">₹1Cr – ₹3Cr</option>
+            <option value="₹3Cr – ₹5Cr">₹3Cr – ₹5Cr</option>
+            <option value="₹5Cr+">₹5Cr+</option>
+          </select>
+          <div class="field-error" id="inv-budget-err">Please select your budget.</div>
+        </div>
+        <div class="full">
+          <label for="inv-source">How did you find us?</label>
+          <select id="inv-source">
+            <option value="">Select source</option>
+            <option value="Instagram">Instagram</option>
+            <option value="AI">AI</option>
+            <option value="Reddit">Reddit</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="YouTube">YouTube</option>
+            <option value="Other">Other</option>
+          </select>
+          <div class="field-error" id="inv-source-err">Please select how you found us.</div>
         </div>
         <div class="full">
           <button type="submit" class="btn-gold">Get Investment Guidance</button>
+          <p class="early-close">Early access batch closes soon — data access begins 1st June</p>
         </div>
       </div>
+      <div class="field-error form-err" id="inv-form-err">Something went wrong. Please try again.</div>
     </form>
     <p class="form-note">For serious investors evaluating New Gurgaon opportunities.</p>
 
     <div class="success-msg" id="investSuccess">
       <div class="success-icon">✦</div>
-      <p>Thanks — we'll connect with you and share relevant insights and opportunities.</p>
-      <small>Based on your profile and current sector signals.</small>
+      <p>You're on the early access list. We'll notify you when the dataset goes live.</p>
     </div>
+  </div>
+
+  <div class="launch-context">
+    <p class="launch-heading">🚀 Full Investment Insights Launching on 1st June</p>
+    <p>We're currently building a sector-level data engine for New Gurgaon.</p>
+    <p>All submissions are being onboarded for early access.</p>
+    <p class="launch-sub">You'll receive:</p>
+    <ul>
+      <li>First access to sector-wise data</li>
+      <li>Market insights based on your investment profile</li>
+      <li>Select opportunities aligned with timing (not mass listings)</li>
+    </ul>
+    <p class="launch-date">Access will be shared starting 1st June.</p>
   </div>
 </section>
 
@@ -808,12 +909,12 @@
           <button type="submit" class="btn-outline">Submit Project Details</button>
         </div>
       </div>
+      <div class="field-error form-err" id="bld-form-err">Something went wrong. Please try again.</div>
     </form>
 
     <div class="success-msg" id="builderSuccess">
       <div class="success-icon">✦</div>
-      <p>Project details received.</p>
-      <small>Your listing will be reviewed and added to the dataset if it fits the tracked criteria.</small>
+      <p>Project submitted. We'll review and connect with relevant investor demand.</p>
     </div>
   </div>
 </section>
@@ -846,78 +947,122 @@
     return /^[\+]?[\d\s\-\(\)]{8,15}$/.test(v.trim());
   }
   function showErr(id, errId) {
-    document.getElementById(id).classList.add('error');
-    document.getElementById(errId).classList.add('show');
+    var el = document.getElementById(id);
+    if (el) el.classList.add('error');
+    var err = document.getElementById(errId);
+    if (err) err.classList.add('show');
   }
   function clearErr(id, errId) {
-    document.getElementById(id).classList.remove('error');
-    document.getElementById(errId).classList.remove('show');
-  }
-  function saveToStorage(key, obj) {
-    const list = JSON.parse(localStorage.getItem(key) || '[]');
-    list.push(obj);
-    localStorage.setItem(key, JSON.stringify(list));
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('error');
+    var err = document.getElementById(errId);
+    if (err) err.classList.remove('show');
   }
 
   /* ── investment guidance form ── */
   document.getElementById('investForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    let ok = true;
-    const fields = [
-      { id: 'inv-name',   err: 'inv-name-err',   check: v => v.trim().length > 1 },
+    var form = this;
+    var ok = true;
+    var fields = [
+      { id: 'inv-name',   err: 'inv-name-err',   check: function(v) { return v.trim().length > 1; } },
       { id: 'inv-phone',  err: 'inv-phone-err',  check: isValidPhone },
-      { id: 'inv-budget', err: 'inv-budget-err', check: v => v.trim().length > 0 },
+      { id: 'inv-budget', err: 'inv-budget-err', check: function(v) { return v !== ''; } },
+      { id: 'inv-source', err: 'inv-source-err', check: function(v) { return v !== ''; } },
     ];
-    fields.forEach(f => {
-      const val = document.getElementById(f.id).value;
+    fields.forEach(function(f) {
+      var val = document.getElementById(f.id).value;
       if (!f.check(val)) { showErr(f.id, f.err); ok = false; }
       else clearErr(f.id, f.err);
     });
     if (!ok) return;
-    saveToStorage('propvest_investors', {
-      name:   document.getElementById('inv-name').value.trim(),
-      phone:  document.getElementById('inv-phone').value.trim(),
-      budget: document.getElementById('inv-budget').value.trim(),
-      ts:     new Date().toISOString(),
+
+    var btn = form.querySelector('button[type="submit"]');
+    var formErr = document.getElementById('inv-form-err');
+    formErr.classList.remove('show');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    fetch('https://script.google.com/macros/s/AKfycbzMmnGV00IuwIEF-D4tqHKDyz1DvOUiWnP1Blxv9h3BvF1BpqwAHcRlly65r38fNH9-EA/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({
+        name:   document.getElementById('inv-name').value.trim(),
+        phone:  document.getElementById('inv-phone').value.trim(),
+        budget: document.getElementById('inv-budget').value,
+        source: document.getElementById('inv-source').value,
+      }),
+    })
+    .then(function() {
+      form.style.display = 'none';
+      document.getElementById('investSuccess').style.display = 'block';
+    })
+    .catch(function() {
+      btn.disabled = false;
+      btn.textContent = 'Get Investment Guidance';
+      formErr.classList.add('show');
     });
-    this.style.display = 'none';
-    document.getElementById('investSuccess').style.display = 'block';
   });
 
   /* ── builder form ── */
   document.getElementById('builderForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    let ok = true;
-    const fields = [
-      { id: 'bld-company', err: 'bld-company-err', check: v => v.trim().length > 1 },
-      { id: 'bld-contact', err: 'bld-contact-err', check: v => v.trim().length > 1 },
+    var form = this;
+    var ok = true;
+    var fields = [
+      { id: 'bld-company', err: 'bld-company-err', check: function(v) { return v.trim().length > 1; } },
+      { id: 'bld-contact', err: 'bld-contact-err', check: function(v) { return v.trim().length > 1; } },
       { id: 'bld-phone',   err: 'bld-phone-err',   check: isValidPhone },
-      { id: 'bld-project', err: 'bld-project-err', check: v => v.trim().length > 1 },
-      { id: 'bld-sector',  err: 'bld-sector-err',  check: v => v.trim().length > 1 },
+      { id: 'bld-project', err: 'bld-project-err', check: function(v) { return v.trim().length > 1; } },
+      { id: 'bld-sector',  err: 'bld-sector-err',  check: function(v) { return v.trim().length > 1; } },
     ];
-    fields.forEach(f => {
-      const val = document.getElementById(f.id).value;
+    fields.forEach(function(f) {
+      var val = document.getElementById(f.id).value;
       if (!f.check(val)) { showErr(f.id, f.err); ok = false; }
       else clearErr(f.id, f.err);
     });
     if (!ok) return;
-    saveToStorage('propvest_builders', {
-      company: document.getElementById('bld-company').value.trim(),
-      contact: document.getElementById('bld-contact').value.trim(),
-      phone:   document.getElementById('bld-phone').value.trim(),
-      project: document.getElementById('bld-project').value.trim(),
-      sector:  document.getElementById('bld-sector').value.trim(),
-      ts:      new Date().toISOString(),
+
+    var btn = form.querySelector('button[type="submit"]');
+    var formErr = document.getElementById('bld-form-err');
+    formErr.classList.remove('show');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    fetch('https://script.google.com/macros/s/AKfycbxvIUMg3JhnrOHKSgTegtdZBgqIKKOi5CYVf5o2hm1SKwiaJ9k9cBKsa4d98TaZEw1qJA/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({
+        company:  document.getElementById('bld-company').value.trim(),
+        contact:  document.getElementById('bld-contact').value.trim(),
+        phone:    document.getElementById('bld-phone').value.trim(),
+        project:  document.getElementById('bld-project').value.trim(),
+        location: document.getElementById('bld-sector').value.trim(),
+      }),
+    })
+    .then(function() {
+      form.style.display = 'none';
+      document.getElementById('builderSuccess').style.display = 'block';
+    })
+    .catch(function() {
+      btn.disabled = false;
+      btn.textContent = 'Submit Project Details';
+      formErr.classList.add('show');
     });
-    this.style.display = 'none';
-    document.getElementById('builderSuccess').style.display = 'block';
   });
 
-  /* ── clear field error on input ── */
-  document.querySelectorAll('input').forEach(el => {
+  /* ── clear field errors on interaction ── */
+  document.querySelectorAll('input').forEach(function(el) {
     el.addEventListener('input', function() {
       this.classList.remove('error');
-      const errEl = document.getElementById(this.id + '-err');
+      var errEl = document.getElementById(this.id + '-err');
+      if (errEl) errEl.classList.remove('show');
+    });
+  });
+  document.querySelectorAll('select').forEach(function(el) {
+    el.addEventListener('change', function() {
+      this.classList.remove('error');
+      var errEl = document.getElementById(this.id + '-err');
       if (errEl) errEl.classList.remove('show');
     });
   });
