@@ -1,130 +1,210 @@
-# PropVest — New Gurgaon Real Estate Investment Platform
+# PropVest Website Update — Data-First Investment Intelligence Platform
 
-## Project Overview
-Single-page website for a data-first real estate brokerage focused exclusively on
-investor buyers in New Gurgaon's emerging sectors. No home buyers. No broad Gurgaon
-coverage. One niche, one geography, one buyer type.
+Update the existing single-page HTML website.
 
-## Brand Identity
-- Name: PropVest
-- Instagram: @PropVest_Realtor
-- Tagline: "New Gurgaon Investment Intelligence"
-- Subline: "Data-first. Investor-only. Emerging sectors."
-- Primary color: #0D1B2A (dark navy)
-- Accent color: #C9A84C (gold)
-- Body text: #FFFFFF (white)
-- Muted text: #AAAAAA (grey)
-- Background: #0D1B2A
-- Card background: #1A2B3C
-- Font: Inter or Montserrat (Google Fonts, free)
-- Tone: Professional, data-driven, no hype. Like a Bloomberg terminal for real estate.
+Do NOT change layout, colors, typography, or structure. Only update content and form logic.
 
-## Tech Stack
-- Single HTML file with embedded CSS and JS
-- No frameworks, no external dependencies except Google Fonts
-- Mobile responsive (works perfectly on phone)
-- No backend needed — forms show success message on submit
-- Fast loading, minimal, clean
+---
 
-## Website Structure (single page, scroll-based)
+## 1. HERO SECTION
 
-### Section 1 — Hero
-- Dark navy full-screen hero
-- Headline: "New Gurgaon Investment Intelligence"
-- Subline: "Data-first. Investor-only. Emerging sectors."
-- CTA button: "View Investment Data" (scrolls to price tracker)
-- Small text below: "Tracking New Gurgaon's emerging sectors — weekly"
+Keep headline:
+"New Gurgaon Investment Intelligence"
 
-### Section 2 — Price Tracker Table
-- Section heading: "New Gurgaon Sector Watch"
-- Subheading: "Last updated: May 2026"
-- Clean dark table with gold header row
-- Columns: Sector | Corridor | Price/sqft | 3yr Appreciation | Rental Yield | Risk Level
-- Data rows:
+Keep subline:
+"Data-first. Investor-only. Emerging sectors."
 
-| Sector | Corridor | Price/sqft | 3yr Appreciation | Rental Yield | Risk |
-|--------|----------|------------|-----------------|--------------|------|
-| Sector 84 | Dwarka Expressway | Rs.12,000 | 18% | 3.5% | Medium |
-| Sector 113 | Dwarka Expressway | Rs.8,500 | 22% | 4.0% | Medium-High |
-| Sector 71 | SPR Corridor | Rs.17,000 | 13% | 4.2% | Low-Medium |
-| Sector 93-95 | New Gurgaon | Rs.5,500 | 16% | 3.8% | Medium |
-| Manesar GIC | KMP Expressway | Rs.10,000 | 20% | 4.5% | Medium |
+CTA Button:
+"Get Early Access"
 
-- Small disclaimer below table: "Data sourced from market reports and transaction data.
-  Updated monthly. Not financial advice."
+Remove all brokerage / selling language.
 
-### Section 3 — Investor Lead Form
-- Section heading: "Get Curated Investment Options"
-- Subheading: "Tell us your goal. We'll show you the top 3 projects that match."
-- Form fields:
-  - Full Name (text input, required)
-  - Phone Number (tel input, required)
-  - Investment Budget (dropdown, required):
-    - Under Rs.50 Lakh
-    - Rs.50L - Rs.1 Crore
-    - Rs.1 Crore - Rs.3 Crore
-    - Above Rs.3 Crore
-  - Investment Timeline (dropdown, required):
-    - 1 Year
-    - 3 Years
-    - 5+ Years
-  - Primary Goal (dropdown, required):
-    - Capital Appreciation
-    - Rental Yield
-    - Both
-  - Submit button: "Get My Top 3 Projects" (gold button)
-- On submit: show success message "We'll reach out within 24 hours with your
-  curated project list."
-- Store form data in localStorage as JSON for now
+---
 
-### Section 4 — Builder / Developer Form
-- Section heading: "Are You a Developer or Builder?"
-- Subheading: "List your project for free. Reach qualified investors actively
-  looking in New Gurgaon."
-- Form fields:
-  - Company Name (text input, required)
-  - Contact Person Name (text input, required)
-  - Phone Number (tel input, required)
-  - Project Name (text input, required)
-  - Sector / Location (text input, required)
-  - Submit button: "List My Project" (gold outline button)
-- On submit: show success message "Thank you. We'll review your project and
-  reach out within 48 hours."
-- Store form data in localStorage as JSON
+## 2. PRICE TRACKER SECTION
 
-### Section 5 — Footer
-- Dark navy background
-- Left: PropVest logo text + tagline
-- Center: "Tracking New Gurgaon's emerging sectors weekly"
-- Right: Instagram link @PropVest_Realtor
-- Bottom: "Data for informational purposes only. Not financial advice. All
-  investments carry risk."
+Keep existing table UI.
 
-## Design Details
-- All section headings: white, bold, large
-- All subheadings: gold (#C9A84C), medium weight
-- Cards/containers: slightly lighter navy (#1A2B3C) with subtle gold border
-- Buttons: gold background (#C9A84C) with dark navy text, rounded corners
-- Table: dark background, gold header, alternating row colors
-- Hover effects on buttons and table rows
-- Smooth scroll between sections
-- Mobile: stack all columns, full-width forms, readable font sizes
+Modify:
+- Show price ranges instead of exact values
+  Example: ₹11,500–12,500
 
-## Form Behavior
-- Validate all required fields before submit
-- Show inline error messages in red if fields are empty
-- On successful submit: hide form, show success message in gold
-- Save to localStorage with timestamp
+Add line below:
+"Full dataset unlocks on launch"
 
-## What NOT to include
-- No images or photos (keep it data/text only for now)
-- No pricing or "call now" pushy CTAs
-- No testimonials (no social proof yet)
-- No chatbot or popups
-- No animations that slow loading
+---
 
-## File Output
-- Single file: index.html
-- All CSS inside <style> tags in <head>
-- All JS inside <script> tags before </body>
-- No separate files needed
+## 3. ADD SECTION — THIS WEEK’S INSIGHTS
+
+Add 3 short insights:
+
+- "Sector 113 increased ~₹800/sqft due to Dwarka Expressway progress"
+- "SPR corridor showing stronger rental stability vs appreciation-led sectors"
+- "Manesar GIC behaving like early-stage Dwarka Expressway (high risk, high upside)"
+
+Keep text minimal and sharp.
+
+---
+
+## 4. INVESTOR FORM (WAITLIST)
+
+Replace any existing investor form with:
+
+Heading:
+"Get Early Access to Investment Insights"
+
+Fields:
+- Name (required)
+- Phone (required)
+
+Add field:
+Investment Budget (dropdown)
+Options:
+- ₹50L – ₹1.5Cr
+- ₹1.5Cr – ₹3Cr
+- ₹3Cr – ₹5Cr
+- ₹5Cr+
+
+Add field:
+Source (dropdown)
+Options:
+- Instagram
+- AI
+- Reddit
+- LinkedIn
+- YouTube
+- Other
+
+Button:
+"Get Early Access"
+
+Success message:
+"You're on the early access list. We'll notify you when the dataset goes live."
+
+---
+
+## 5. LAUNCH CONTEXT (IMPORTANT)
+
+Add section below form:
+
+"🚀 Full Investment Insights Launching on 1st June
+
+We’re currently building a sector-level intelligence layer for New Gurgaon.
+
+All submissions are being onboarded for early access.
+
+You’ll receive:
+• First access to sector-wise insights  
+• Market signals based on your investment profile  
+• Select opportunities aligned with timing  
+
+Early access to investment insights begins 1st June."
+
+Add small line below button:
+"Early access batch closes soon — access begins 1st June"
+
+---
+
+## 6. INVESTOR FORM SUBMISSION LOGIC
+
+Remove any localStorage usage.
+
+Send POST request to:
+INVESTOR_WEBHOOK_URL
+
+Use:
+
+fetch(INVESTOR_WEBHOOK_URL, {
+  method: "POST",
+  mode: "no-cors",
+  body: JSON.stringify({
+    name: name,
+    phone: phone,
+    budget: budget,
+    source: source
+  })
+})
+
+---
+
+## 7. BUILDER SECTION
+
+Heading:
+"Access Qualified Investor Demand"
+
+Subtext:
+"List your project to reach investors actively tracking New Gurgaon sectors"
+
+---
+
+## 8. BUILDER FORM
+
+Fields:
+- Company Name
+- Contact Person
+- Phone
+- Project Name
+- Location
+
+Form ID:
+builderForm
+
+---
+
+## 9. BUILDER FORM SUBMISSION
+
+Send POST request to:
+BUILDER_WEBHOOK_URL
+
+Use:
+
+fetch(BUILDER_WEBHOOK_URL, {
+  method: "POST",
+  mode: "no-cors",
+  body: JSON.stringify({
+    company: company,
+    contact: contact,
+    phone: phone,
+    project: project,
+    location: location
+  })
+})
+
+Success message:
+"Project submitted. We'll review and connect with relevant investor demand."
+
+---
+
+## 10. REMOVE BROKERAGE LANGUAGE
+
+Remove:
+- "We will contact you"
+- "Top 3 projects"
+- "Best investment options"
+
+Keep positioning:
+Data → Insights → Decision
+
+---
+
+## 11. DISCLAIMER
+
+Add below table or footer:
+
+"Data based on market observations, listings, and reported transactions. For informational purposes only."
+
+---
+
+## 12. DESIGN RULES
+
+- Dark, minimal, Bloomberg-style UI
+- No images
+- No animations
+- Clean spacing
+- Mobile responsive
+
+---
+
+## OUTPUT
+
+Return FULL updated HTML file.

@@ -903,8 +903,8 @@
   <h1>New Gurgaon<br /><span>Investment Intelligence</span></h1>
   <p class="hero-tagline">Understand where to invest before price movement becomes obvious.</p>
   <p class="hero-desc">Track sector-level signals, demand shifts, and identify real investment opportunities across New Gurgaon.</p>
-  <p class="hero-act">PropVest helps you not just understand the market — but also act on it.</p>
-  <a href="#invest" class="btn-primary">Explore Investment Options</a>
+  <p class="hero-act">PropVest helps you not just understand the market but also act on it.</p>
+  <a href="#invest" class="btn-primary">Explore Investment Guidance</a>
   <p class="hero-trust">Built for investors actively looking to deploy capital in New Gurgaon</p>
 </section>
 
@@ -1179,9 +1179,11 @@
       </div>
     </div>
 
+    <button class="btn-gold" id="calc-btn" type="button" style="margin-bottom:1.3rem;">Calculate Returns →</button>
+
     <hr class="calc-divider" />
 
-    <div class="calc-output">
+    <div class="calc-output" id="calc-output" style="display:none;">
       <div class="calc-result">
         <span class="calc-result-val" id="calc-proj">—</span>
         <span class="calc-result-label">Projected Value</span>
@@ -1195,7 +1197,7 @@
         <span class="calc-result-label">Monthly Rental Est.</span>
       </div>
     </div>
-    <p class="calc-note">Estimates based on historical 3-year appreciation data and current rental yields. Not financial advice.</p>
+    <p class="calc-note" id="calc-note" style="display:none;">Estimates based on historical 3-year appreciation data and current rental yields. Not financial advice.</p>
   </div>
 </section>
 
@@ -1568,18 +1570,6 @@
     document.body.classList.remove('modal-open');
   }
 
-  document.getElementById('modalClose').addEventListener('click', closeModal);
-  document.getElementById('sectorModal').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-  });
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeModal();
-  });
-  document.getElementById('modal-cta-btn').addEventListener('click', function() {
-    closeModal();
-    setTimeout(function() { document.getElementById('invest').scrollIntoView({ behavior: 'smooth' }); }, 200);
-  });
-
   /* ── investment calculator ── */
   var CALC_DATA = {
     sec84:  { appr3yr: 18, rentalYield: 3.5 },
@@ -1621,7 +1611,11 @@
       calcUpdate();
     });
   });
-  calcUpdate();
+  document.getElementById('calc-btn').addEventListener('click', function() {
+    calcUpdate();
+    document.getElementById('calc-output').style.display = 'grid';
+    document.getElementById('calc-note').style.display = 'block';
+  });
 </script>
 
 <!-- ─── SECTOR MODAL ─── -->
@@ -1645,6 +1639,20 @@
     <button class="modal-cta-btn" id="modal-cta-btn">Get Investment Guidance &#x2192;</button>
   </div>
 </div>
+
+<script>
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('sectorModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+  document.getElementById('modal-cta-btn').addEventListener('click', function() {
+    closeModal();
+    setTimeout(function() { document.getElementById('invest').scrollIntoView({ behavior: 'smooth' }); }, 200);
+  });
+</script>
 
 </body>
 </html>
