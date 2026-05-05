@@ -811,65 +811,6 @@
     .infra-tags { display: flex; flex-wrap: wrap; gap: 0.38rem; }
     .infra-tag { display: inline-block; background: rgba(201,168,76,0.06); border: 1px solid var(--border); color: var(--muted); font-size: 0.6rem; font-weight: 500; padding: 0.12rem 0.48rem; border-radius: 2px; }
 
-    /* ─── CALCULATOR ─── */
-    .calc-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 2rem; max-width: 680px; }
-    .calc-budget-display { font-size: 1.5rem; font-weight: 800; color: var(--gold); margin-bottom: 0.5rem; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
-    input[type="range"] {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 4px;
-      background: rgba(201,168,76,0.2);
-      border-radius: 2px;
-      outline: none;
-      cursor: pointer;
-      border: none;
-      padding: 0;
-      margin-bottom: 0.3rem;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 16px; height: 16px;
-      border-radius: 50%;
-      background: var(--gold);
-      cursor: pointer;
-      border: 2px solid var(--navy);
-      box-shadow: 0 0 0 2px var(--gold);
-    }
-    input[type="range"]::-moz-range-thumb {
-      width: 16px; height: 16px;
-      border-radius: 50%;
-      background: var(--gold);
-      cursor: pointer;
-      border: 2px solid var(--navy);
-    }
-    .calc-range-labels { display: flex; justify-content: space-between; font-size: 0.63rem; color: var(--muted); margin-bottom: 1.3rem; }
-    .calc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.3rem; }
-    .calc-label { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.42rem; }
-    .horizon-btns { display: flex; gap: 0.45rem; }
-    .horizon-btn {
-      flex: 1;
-      background: rgba(13,27,42,0.8);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: var(--muted);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.58rem 0.5rem;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: all 0.15s;
-      text-align: center;
-    }
-    .horizon-btn.active { background: rgba(201,168,76,0.15); border-color: var(--gold); color: var(--gold); }
-    .calc-divider { border: none; border-top: 1px solid var(--border); margin: 0 0 1.3rem; }
-    .calc-output { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; }
-    .calc-result { background: rgba(13,27,42,0.5); border: 1px solid var(--border); border-radius: 4px; padding: 0.95rem 0.7rem; text-align: center; }
-    .calc-result-val { display: block; font-size: 1.05rem; font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; margin-bottom: 0.2rem; letter-spacing: -0.01em; }
-    .calc-result-label { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
-    .calc-note { margin-top: 0.8rem; font-size: 0.68rem; color: var(--muted); font-style: italic; }
-
     @media (max-width: 860px) {
       .infra-grid { grid-template-columns: 1fr 1fr; }
     }
@@ -878,7 +819,6 @@
       .stat-item { border-right: none; border-bottom: 1px solid var(--border); padding: 1rem; }
       .stat-item:last-child { border-bottom: none; }
       .infra-grid { grid-template-columns: 1fr; }
-      .calc-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -893,7 +833,6 @@
     <li><a href="#invest">Invest</a></li>
     <li><a href="#builder">Builders</a></li>
     <li><a href="#infra">Infra</a></li>
-    <li><a href="#calculator">Calculator</a></li>
   </ul>
 </nav>
 
@@ -1140,64 +1079,6 @@
         <span class="infra-tag">Manesar</span>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ─── INVESTMENT CALCULATOR ─── -->
-<section id="calculator">
-  <div class="section-tag">Returns Estimator</div>
-  <h2 class="section-heading">Investment Return Calculator</h2>
-  <p class="section-sub">Estimate projected returns based on real sector data. Adjust budget, sector, and time horizon.</p>
-  <div class="divider"></div>
-
-  <div class="calc-card">
-    <div>
-      <span class="calc-label">Investment Budget</span>
-      <div class="calc-budget-display" id="calc-budget-display">₹50L</div>
-      <input type="range" id="calc-budget" min="5000000" max="100000000" step="500000" value="5000000" />
-      <div class="calc-range-labels"><span>₹50L</span><span>₹10Cr</span></div>
-    </div>
-
-    <div class="calc-row">
-      <div>
-        <span class="calc-label">Sector</span>
-        <select id="calc-sector">
-          <option value="sec84">Sector 84 — Dwarka Expressway</option>
-          <option value="sec113">Sector 113 — Dwarka Expressway</option>
-          <option value="sec71">Sector 71 — SPR Corridor</option>
-          <option value="sec9395">Sectors 93–95 — New Gurgaon</option>
-          <option value="manesar">Manesar GIC — KMP Expressway</option>
-        </select>
-      </div>
-      <div>
-        <span class="calc-label">Time Horizon</span>
-        <div class="horizon-btns">
-          <button class="horizon-btn active" data-years="3">3 yrs</button>
-          <button class="horizon-btn" data-years="5">5 yrs</button>
-          <button class="horizon-btn" data-years="7">7 yrs</button>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-gold" id="calc-btn" type="button" style="margin-bottom:1.3rem;">Calculate Returns →</button>
-
-    <hr class="calc-divider" />
-
-    <div class="calc-output" id="calc-output" style="display:none;">
-      <div class="calc-result">
-        <span class="calc-result-val" id="calc-proj">—</span>
-        <span class="calc-result-label">Projected Value</span>
-      </div>
-      <div class="calc-result">
-        <span class="calc-result-val" id="calc-return">—</span>
-        <span class="calc-result-label">Total Returns</span>
-      </div>
-      <div class="calc-result">
-        <span class="calc-result-val" id="calc-rental">—</span>
-        <span class="calc-result-label">Monthly Rental Est.</span>
-      </div>
-    </div>
-    <p class="calc-note" id="calc-note" style="display:none;">Estimates based on historical 3-year appreciation data and current rental yields. Not financial advice.</p>
   </div>
 </section>
 
@@ -1570,52 +1451,6 @@
     document.body.classList.remove('modal-open');
   }
 
-  /* ── investment calculator ── */
-  var CALC_DATA = {
-    sec84:  { appr3yr: 18, rentalYield: 3.5 },
-    sec113: { appr3yr: 22, rentalYield: 4.0 },
-    sec71:  { appr3yr: 13, rentalYield: 4.2 },
-    sec9395:{ appr3yr: 16, rentalYield: 3.8 },
-    manesar:{ appr3yr: 20, rentalYield: 4.5 }
-  };
-
-  function formatRupees(val) {
-    if (val >= 10000000) return '₹' + (val / 10000000).toFixed(2).replace(/\.?0+$/, '') + 'Cr';
-    return '₹' + (val / 100000).toFixed(1).replace(/\.0$/, '') + 'L';
-  }
-
-  function calcUpdate() {
-    var amount = parseInt(document.getElementById('calc-budget').value);
-    var sectorKey = document.getElementById('calc-sector').value;
-    var activeBtn = document.querySelector('.horizon-btn.active');
-    var years = activeBtn ? parseInt(activeBtn.dataset.years) : 3;
-    var data = CALC_DATA[sectorKey];
-    if (!data) return;
-    var cagr = Math.pow(1 + data.appr3yr / 100, 1 / 3) - 1;
-    var projValue = amount * Math.pow(1 + cagr, years);
-    var totalReturn = projValue - amount;
-    var returnPct = Math.round(totalReturn / amount * 100);
-    var monthlyRental = amount * data.rentalYield / 100 / 12;
-    document.getElementById('calc-budget-display').textContent = formatRupees(amount);
-    document.getElementById('calc-proj').textContent = formatRupees(Math.round(projValue));
-    document.getElementById('calc-return').textContent = '+' + formatRupees(Math.round(totalReturn)) + ' (' + returnPct + '%)';
-    document.getElementById('calc-rental').textContent = formatRupees(Math.round(monthlyRental)) + '/mo';
-  }
-
-  document.getElementById('calc-budget').addEventListener('input', calcUpdate);
-  document.getElementById('calc-sector').addEventListener('change', calcUpdate);
-  document.querySelectorAll('.horizon-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.horizon-btn').forEach(function(b) { b.classList.remove('active'); });
-      this.classList.add('active');
-      calcUpdate();
-    });
-  });
-  document.getElementById('calc-btn').addEventListener('click', function() {
-    calcUpdate();
-    document.getElementById('calc-output').style.display = 'grid';
-    document.getElementById('calc-note').style.display = 'block';
-  });
 </script>
 
 <!-- ─── SECTOR MODAL ─── -->
