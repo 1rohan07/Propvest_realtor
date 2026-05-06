@@ -12,6 +12,7 @@
   <meta name="twitter:title" content="PropVest — New Gurgaon Real Estate Intelligence" />
   <meta name="twitter:description" content="Data-first. Emerging sectors. Understand where to invest or buy your home in New Gurgaon before the market moves." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -35,6 +36,21 @@
       color: var(--white);
       line-height: 1.6;
       font-size: 16px;
+    }
+
+    /* ─── HERO MAP ─── */
+    #hero-map {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.28;
+      pointer-events: none;
+    }
+    .leaflet-control-attribution {
+      font-size: 0.5rem !important;
+      background: rgba(0,0,0,0.25) !important;
+      color: rgba(255,255,255,0.25) !important;
+      pointer-events: none !important;
     }
 
     /* ─── NAV ─── */
@@ -865,6 +881,7 @@
 
 <!-- ─── HERO ─── -->
 <section id="hero">
+  <div id="hero-map"></div>
   <div class="hero-label">New Gurgaon &nbsp;·&nbsp; Emerging Sectors</div>
   <h1>New Gurgaon<br /><span>Real Estate Intelligence</span></h1>
   <p class="hero-tagline">Understand where to buy — whether you're an investor or finding your home.</p>
@@ -1340,6 +1357,28 @@
     © 2026 PropVest. All rights reserved.
   </div>
 </footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+  (function() {
+    var heroMap = L.map('hero-map', {
+      center: [28.42, 76.97],
+      zoom: 11,
+      zoomControl: false,
+      scrollWheelZoom: false,
+      dragging: false,
+      touchZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      attributionControl: true
+    });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd'
+    }).addTo(heroMap);
+  })();
+</script>
 
 <script>
   function isValidPhone(v) {
