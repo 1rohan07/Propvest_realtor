@@ -387,9 +387,8 @@
     }
     .td-sector  { font-weight: 600; }
     .td-corridor{ color: var(--muted); font-size: 0.82rem; }
-    .td-price   { font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
-    .td-appr    { color: var(--green); font-weight: 600; }
-    .td-yield   { color: var(--blue);  font-weight: 600; }
+    .td-demand  { font-size: 0.82rem; color: var(--white); font-weight: 500; }
+    .td-activity{ font-size: 0.78rem; color: var(--muted); font-style: italic; }
 
     .disclaimer {
       margin-top: 1rem;
@@ -853,6 +852,91 @@
     .infra-tags { display: flex; flex-wrap: wrap; gap: 0.38rem; }
     .infra-tag { display: inline-block; background: rgba(201,168,76,0.06); border: 1px solid var(--border); color: var(--muted); font-size: 0.6rem; font-weight: 500; padding: 0.12rem 0.48rem; border-radius: 2px; }
 
+    /* ─── INFRA EXPAND ─── */
+    .infra-expand-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 0.22rem 0.6rem;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      margin-top: 0.85rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .infra-expand-btn:hover { color: var(--gold); border-color: rgba(201,168,76,0.5); }
+    .infra-detail {
+      display: none;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(201,168,76,0.12);
+    }
+    .infra-detail.open { display: block; animation: expandIn 0.2s ease; }
+    @keyframes expandIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+    .infra-detail-label {
+      font-size: 0.56rem;
+      font-weight: 700;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.3rem;
+      margin-top: 0.7rem;
+    }
+    .infra-detail-label:first-child { margin-top: 0; }
+    .infra-detail ul { list-style: none; margin: 0; padding: 0; }
+    .infra-detail ul li {
+      font-size: 0.77rem;
+      color: var(--muted);
+      line-height: 1.6;
+      padding: 0.08rem 0 0.08rem 0.85rem;
+      position: relative;
+    }
+    .infra-detail ul li::before { content: '·'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+    .infra-detail-obs {
+      margin-top: 0.6rem;
+      font-size: 0.77rem;
+      color: var(--muted);
+      line-height: 1.6;
+      padding: 0.55rem 0.85rem;
+      background: rgba(13,27,42,0.5);
+      border-left: 2px solid rgba(201,168,76,0.3);
+      border-radius: 0 2px 2px 0;
+    }
+
+    /* ─── INTEL BADGE ─── */
+    .intel-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.56rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+      background: rgba(93,219,168,0.07);
+      border: 1px solid rgba(93,219,168,0.18);
+      padding: 0.12rem 0.45rem;
+      border-radius: 2px;
+      vertical-align: middle;
+      margin-left: 0.5rem;
+    }
+    .intel-badge::before {
+      content: '';
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--green);
+      display: inline-block;
+      animation: livePulse 2.2s ease-in-out infinite;
+    }
+    @keyframes livePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
     @media (max-width: 860px) {
       .infra-grid { grid-template-columns: 1fr 1fr; }
     }
@@ -876,6 +960,7 @@
     <li><a href="#homebuyer">Home Buyers</a></li>
     <li><a href="#builder">Builders</a></li>
     <li><a href="#infra">Infra</a></li>
+    <li><a href="about.html">About</a></li>
   </ul>
 </nav>
 
@@ -900,12 +985,12 @@
     <span class="stat-label">Sectors Tracked</span>
   </div>
   <div class="stat-item">
-    <span class="stat-num" id="stat-appr">0</span>
-    <span class="stat-label">Avg 3-Year Appreciation</span>
+    <span class="stat-num" id="stat-corridors">0</span>
+    <span class="stat-label">Active Demand Corridors</span>
   </div>
   <div class="stat-item">
-    <span class="stat-num" id="stat-deal">0</span>
-    <span class="stat-label">Avg Deal Size</span>
+    <span class="stat-num" id="stat-signals">0</span>
+    <span class="stat-label">Market Signals Tracked</span>
   </div>
 </div>
 
@@ -922,7 +1007,7 @@
       <div class="signal-item">
         <span class="signal-sector">Sector 113</span>
         <span class="signal-arrow">→</span>
-        <span class="sig-badge sig-late">Late Entry Risk</span>
+        <span class="sig-badge sig-late">High Saturation</span>
       </div>
       <div class="signal-item">
         <span class="signal-sector">SPR Corridor</span>
@@ -951,8 +1036,8 @@
     </div>
     <div class="how-card">
       <div class="how-num">03</div>
-      <h3>Execution Support</h3>
-      <p>Once you identify the right sector, PropVest helps you access and evaluate options — for investment or end use.</p>
+      <h3>Market Navigation</h3>
+      <p>Once you've identified the right sector, PropVest helps you shortlist and evaluate opportunities — filtering noise and supporting informed decisions for investment or end use.</p>
     </div>
   </div>
 </section>
@@ -961,7 +1046,7 @@
 <section id="tracker">
   <div class="section-tag">Sector Watch</div>
   <h2 class="section-heading">New Gurgaon Sector Watch</h2>
-  <p class="section-sub">Last updated: May 2026</p>
+  <p class="section-sub">Last observed: May 2026 <span class="intel-badge">Updated This Week</span></p>
   <div class="divider"></div>
 
   <div class="table-wrap">
@@ -970,9 +1055,8 @@
         <tr>
           <th>Sector</th>
           <th>Corridor</th>
-          <th>Price / sqft</th>
-          <th>3yr Appreciation</th>
-          <th>Rental Yield</th>
+          <th>Demand Momentum</th>
+          <th>Observed Signal</th>
           <th>Signal</th>
           <th></th>
         </tr>
@@ -981,45 +1065,40 @@
         <tr>
           <td class="td-sector">Sector 84</td>
           <td class="td-corridor">Dwarka Expressway</td>
-          <td class="td-price">₹11,500–12,500</td>
-          <td class="td-appr">+18%</td>
-          <td class="td-yield">3.5%</td>
+          <td class="td-demand">High Buyer Momentum</td>
+          <td class="td-activity">Demand Increasing</td>
           <td><span class="sig-badge sig-early">Early Entry Zone</span></td>
           <td><button class="btn-view" onclick="openModal('sec84')">View →</button></td>
         </tr>
         <tr>
           <td class="td-sector">Sector 113</td>
           <td class="td-corridor">Dwarka Expressway</td>
-          <td class="td-price">₹8,000–9,000</td>
-          <td class="td-appr">+22%</td>
-          <td class="td-yield">4.0%</td>
-          <td><span class="sig-badge sig-late">Late Entry Risk</span></td>
+          <td class="td-demand">Elevated Investor Activity</td>
+          <td class="td-activity">Inventory Compressing</td>
+          <td><span class="sig-badge sig-late">High Saturation</span></td>
           <td><button class="btn-view" onclick="openModal('sec113')">View →</button></td>
         </tr>
         <tr>
           <td class="td-sector">Sector 71</td>
           <td class="td-corridor">SPR Corridor</td>
-          <td class="td-price">₹16,500–17,500</td>
-          <td class="td-appr">+13%</td>
-          <td class="td-yield">4.2%</td>
+          <td class="td-demand">Stable End-User Demand</td>
+          <td class="td-activity">Absorption Improving</td>
           <td><span class="sig-badge sig-rental">Rental Yield Play</span></td>
           <td><button class="btn-view" onclick="openModal('sec71')">View →</button></td>
         </tr>
         <tr>
-          <td class="td-sector">Sector 93–95</td>
+          <td class="td-sector">Sectors 93–95</td>
           <td class="td-corridor">New Gurgaon</td>
-          <td class="td-price">₹5,000–6,000</td>
-          <td class="td-appr">+16%</td>
-          <td class="td-yield">3.8%</td>
+          <td class="td-demand">Emerging Buyer Interest</td>
+          <td class="td-activity">Limited New Supply</td>
           <td><span class="sig-badge sig-early">Early Entry Zone</span></td>
           <td><button class="btn-view" onclick="openModal('sec9395')">View →</button></td>
         </tr>
         <tr>
           <td class="td-sector">Manesar GIC</td>
           <td class="td-corridor">KMP Expressway</td>
-          <td class="td-price">₹9,500–10,500</td>
-          <td class="td-appr">+20%</td>
-          <td class="td-yield">4.5%</td>
+          <td class="td-demand">Infrastructure-led Momentum</td>
+          <td class="td-activity">Industrial Demand Building</td>
           <td><span class="sig-badge sig-early">Early Entry Zone</span></td>
           <td><button class="btn-view" onclick="openModal('manesar')">View →</button></td>
         </tr>
@@ -1039,15 +1118,15 @@
   <div class="insights-grid">
     <div class="insight-card">
       <div class="insight-num">01</div>
-      <p>Sector 113 increased ~₹800/sqft in recent months due to Dwarka Expressway progress</p>
+      <p>Sector 113 showing accelerated buyer absorption following Dwarka Expressway completion — inventory levels tightening with limited new launches entering the corridor</p>
     </div>
     <div class="insight-card">
       <div class="insight-num">02</div>
-      <p>SPR corridor showing stronger rental stability vs appreciation-led sectors</p>
+      <p>SPR corridor demonstrating stronger rental stability relative to appreciation-driven sectors — consistent end-user demand underpinning occupancy across Sector 71 and adjacent zones</p>
     </div>
     <div class="insight-card">
       <div class="insight-num">03</div>
-      <p>Sectors 93–95 seeing first-time buyer interest as prices remain accessible below ₹6,000/sqft — one of the few entry points left in New Gurgaon</p>
+      <p>Sectors 93–95 attracting first-time buyer and early-stage investor interest — one of the few remaining accessible entry points in New Gurgaon's growth belt</p>
     </div>
   </div>
 </section>
@@ -1066,11 +1145,27 @@
         <span class="impact-high">High Impact</span>
       </div>
       <div class="infra-name">Dwarka Expressway</div>
-      <div class="infra-desc">Fully operational 29km expressway connecting Delhi to New Gurgaon — primary driver of sector appreciation along its corridor.</div>
+      <div class="infra-desc">Fully operational 29km expressway connecting Delhi to New Gurgaon — primary demand driver along its corridor.</div>
       <div class="infra-tags">
         <span class="infra-tag">Sector 84</span>
         <span class="infra-tag">Sector 88</span>
         <span class="infra-tag">Sector 113</span>
+      </div>
+      <button class="infra-expand-btn" onclick="toggleInfra(this,'infra-d1')">View Influence →</button>
+      <div class="infra-detail" id="infra-d1">
+        <div class="infra-detail-label">Affected Areas</div>
+        <ul>
+          <li>Sector 84, Sector 88A, Sector 113, Sector 114</li>
+        </ul>
+        <div class="infra-detail-label">Expected Market Influence</div>
+        <ul>
+          <li>Stronger end-user demand along access nodes</li>
+          <li>Increased corridor absorption — fewer unsold units</li>
+          <li>Improved Delhi connectivity driving mid-premium launches</li>
+          <li>Appreciation pressure consolidating near interchange zones</li>
+        </ul>
+        <div class="infra-detail-label">Market Observation</div>
+        <div class="infra-detail-obs">Demand activity appears strongest in sectors with active mid-premium project launches and improving social infrastructure. Corridor is past its early-stage window — buyer profiles shifting from speculative to end-use.</div>
       </div>
     </div>
 
@@ -1085,6 +1180,22 @@
         <span class="infra-tag">Manesar</span>
         <span class="infra-tag">KMP Corridor</span>
       </div>
+      <button class="infra-expand-btn" onclick="toggleInfra(this,'infra-d2')">View Influence →</button>
+      <div class="infra-detail" id="infra-d2">
+        <div class="infra-detail-label">Affected Areas</div>
+        <ul>
+          <li>Manesar, IMT Manesar, KMP Corridor fringe sectors</li>
+        </ul>
+        <div class="infra-detail-label">Expected Market Influence</div>
+        <ul>
+          <li>Logistics and industrial land demand accelerating</li>
+          <li>Spillover residential interest in adjacent workforce zones</li>
+          <li>Investor attention from industrial and warehousing REIT comparables</li>
+          <li>Employment node proximity influencing buyer profiles</li>
+        </ul>
+        <div class="infra-detail-label">Market Observation</div>
+        <div class="infra-detail-obs">Industrial adjacency is creating a new residential demand dynamic in Manesar. Proximity to employment nodes is shifting buyer mix — workforce housing demand is increasingly distinct from pure investor demand.</div>
+      </div>
     </div>
 
     <div class="infra-card">
@@ -1093,10 +1204,25 @@
         <span class="impact-high">High Impact</span>
       </div>
       <div class="infra-name">KMP Expressway Nodes</div>
-      <div class="infra-desc">Kundli–Manesar–Palwal corridor enabling industrial nodes that underpin the Manesar GIC investment thesis.</div>
+      <div class="infra-desc">Kundli–Manesar–Palwal corridor enabling industrial nodes that underpin the Manesar GIC demand thesis.</div>
       <div class="infra-tags">
         <span class="infra-tag">Manesar GIC</span>
         <span class="infra-tag">Sector 93–95</span>
+      </div>
+      <button class="infra-expand-btn" onclick="toggleInfra(this,'infra-d3')">View Influence →</button>
+      <div class="infra-detail" id="infra-d3">
+        <div class="infra-detail-label">Affected Areas</div>
+        <ul>
+          <li>Manesar GIC, Sectors 93–95, New Gurgaon fringe</li>
+        </ul>
+        <div class="infra-detail-label">Expected Market Influence</div>
+        <ul>
+          <li>Industrial cluster formation driving workforce housing demand</li>
+          <li>Early-stage land value uplift observed in adjacent residential zones</li>
+          <li>Emerging investor attention — infrastructure playbook resembles early Dwarka Expressway dynamics</li>
+        </ul>
+        <div class="infra-detail-label">Market Observation</div>
+        <div class="infra-detail-obs">Sectors adjacent to KMP nodes are at a comparable infrastructure stage to early Dwarka Expressway development. Early accumulation interest being observed — patience horizon likely 5–7 years for full absorption.</div>
       </div>
     </div>
 
@@ -1106,10 +1232,26 @@
         <span class="impact-medium">Medium Impact</span>
       </div>
       <div class="infra-name">Metro Phase 4 Extension</div>
-      <div class="infra-desc">Proposed Gurgaon metro extension targeting SPR and southern New Gurgaon sectors. Expected completion 2027–28.</div>
+      <div class="infra-desc">Gurgaon metro extension targeting SPR and southern New Gurgaon sectors. Expected completion 2027–28.</div>
       <div class="infra-tags">
         <span class="infra-tag">Sector 71</span>
         <span class="infra-tag">Sector 82</span>
+      </div>
+      <button class="infra-expand-btn" onclick="toggleInfra(this,'infra-d4')">View Influence →</button>
+      <div class="infra-detail" id="infra-d4">
+        <div class="infra-detail-label">Affected Areas</div>
+        <ul>
+          <li>Sector 71, Sector 82, SPR Corridor mid-zone</li>
+        </ul>
+        <div class="infra-detail-label">Expected Market Influence</div>
+        <ul>
+          <li>Mass transit access expected to strengthen end-user demand significantly</li>
+          <li>Mid-segment rental demand likely to improve post-completion</li>
+          <li>Office corridor spillover into adjacent residential activity</li>
+          <li>Anticipatory investor interest building ahead of 2027–28 completion</li>
+        </ul>
+        <div class="infra-detail-label">Market Observation</div>
+        <div class="infra-detail-obs">Metro connectivity consistently improves occupancy and rental stability in suburban corridors. Impact is expected to materialise upon completion — current activity appears partially anticipatory rather than demand-led.</div>
       </div>
     </div>
 
@@ -1123,6 +1265,21 @@
       <div class="infra-tags">
         <span class="infra-tag">Sector 93–95</span>
         <span class="infra-tag">Manesar</span>
+      </div>
+      <button class="infra-expand-btn" onclick="toggleInfra(this,'infra-d5')">View Influence →</button>
+      <div class="infra-detail" id="infra-d5">
+        <div class="infra-detail-label">Affected Areas</div>
+        <ul>
+          <li>Sectors 93–95, Manesar, New Gurgaon fringe</li>
+        </ul>
+        <div class="infra-detail-label">Expected Market Influence</div>
+        <ul>
+          <li>Large-scale manufacturing employment hub expected to drive workforce housing demand</li>
+          <li>Residential land value uplift in sectors within 5–8km of hub zones</li>
+          <li>Investor interest from DMIC adjacency — industrial REIT demand dynamic</li>
+        </ul>
+        <div class="infra-detail-label">Market Observation</div>
+        <div class="infra-detail-obs">DMIC designation typically precedes 5–8 year demand cycles in adjacent residential markets. Early observation stage currently — this remains a speculative but infrastructure-backed thesis for patient capital.</div>
       </div>
     </div>
   </div>
@@ -1574,53 +1731,63 @@
       if (entries[0].isIntersecting && !statsAnimated) {
         statsAnimated = true;
         countUp(document.getElementById('stat-sectors'), 5, 900, '', '', 0);
-        countUp(document.getElementById('stat-appr'), 19, 1200, '+', '%', 0);
-        countUp(document.getElementById('stat-deal'), 2.4, 1100, '₹', 'Cr', 1);
+        countUp(document.getElementById('stat-corridors'), 3, 900, '', '', 0);
+        countUp(document.getElementById('stat-signals'), 12, 1100, '', '+', 0);
       }
     }, { threshold: 0.5 });
     statsObs.observe(statsBar);
   } else if (statsBar) {
     document.getElementById('stat-sectors').textContent = '5';
-    document.getElementById('stat-appr').textContent = '+19%';
-    document.getElementById('stat-deal').textContent = '₹2.4Cr';
+    document.getElementById('stat-corridors').textContent = '3';
+    document.getElementById('stat-signals').textContent = '12+';
   }
 
   /* ── sector modal ── */
   var MODAL_DATA = {
     sec84: {
       name: 'Sector 84', corridor: 'Dwarka Expressway',
-      price: '₹11,500–12,500', appr: '+18%', yield: '3.5%',
+      m1: 'High', m1l: 'Buyer Activity',
+      m2: 'Growing', m2l: 'Demand Momentum',
+      m3: 'Low', m3l: 'Supply Pressure',
       signal: 'Early Entry Zone', signalClass: 'sig-early',
       bars: [8, 11, 13, 16, 18],
-      outlook: 'Ideal timing window — Dwarka Expressway completion has unlocked demand but builder pricing hasn\'t fully caught up yet. Strong infrastructure backing with low saturation risk.'
+      outlook: 'Favourable observation window — Dwarka Expressway completion has unlocked consistent demand but corridor is not yet saturated. Strong infrastructure backing with manageable absorption risk.'
     },
     sec113: {
       name: 'Sector 113', corridor: 'Dwarka Expressway',
-      price: '₹8,000–9,000', appr: '+22%', yield: '4.0%',
-      signal: 'Late Entry Risk', signalClass: 'sig-late',
+      m1: 'Elevated', m1l: 'Buyer Activity',
+      m2: 'Compressing', m2l: 'Inventory Level',
+      m3: 'Medium', m3l: 'Supply Pressure',
+      signal: 'High Saturation', signalClass: 'sig-late',
       bars: [10, 15, 18, 21, 22],
-      outlook: 'Strong appreciation trajectory but late-stage — price moved significantly over recent quarters. Entry now carries compression risk as early momentum has largely played out.'
+      outlook: 'Strong demand trajectory but late-stage — corridor has absorbed significant buyer interest over recent periods. Entry now carries saturation risk as early momentum has largely consolidated.'
     },
     sec71: {
       name: 'Sector 71', corridor: 'SPR Corridor',
-      price: '₹16,500–17,500', appr: '+13%', yield: '4.2%',
+      m1: 'Stable', m1l: 'Buyer Activity',
+      m2: 'Improving', m2l: 'Absorption Rate',
+      m3: 'Low', m3l: 'Supply Pressure',
       signal: 'Rental Yield Play', signalClass: 'sig-rental',
       bars: [6, 8, 9, 11, 13],
-      outlook: 'Mature, stable corridor. Low appreciation upside but strong rental demand from working professionals. Best suited for passive income seekers over capital gain chasers.'
+      outlook: 'Mature, stable corridor with consistent end-user demand. Limited capital momentum but strong rental stability from working professional demand. Suited for income-focused positioning over capital gain.'
     },
     sec9395: {
       name: 'Sectors 93–95', corridor: 'New Gurgaon',
-      price: '₹5,000–6,000', appr: '+16%', yield: '3.8%',
+      m1: 'Emerging', m1l: 'Buyer Activity',
+      m2: 'Building', m2l: 'Demand Momentum',
+      m3: 'Very Low', m3l: 'Supply Pressure',
       signal: 'Early Entry Zone', signalClass: 'sig-early',
       bars: [5, 8, 10, 13, 16],
-      outlook: 'Earliest-stage play with the most land available. Infrastructure catch-up underway — high upside, but higher patience required. Best for investors with a 5–7 year horizon.'
+      outlook: 'Earliest-stage corridor with the most land available and infrastructure catch-up underway. High potential observed, higher patience required. Suited for investors with a 5–7 year strategic horizon.'
     },
     manesar: {
       name: 'Manesar GIC', corridor: 'KMP Expressway',
-      price: '₹9,500–10,500', appr: '+20%', yield: '4.5%',
+      m1: 'Growing', m1l: 'Buyer Activity',
+      m2: 'Building', m2l: 'Demand Momentum',
+      m3: 'Low', m3l: 'Supply Pressure',
       signal: 'Early Entry Zone', signalClass: 'sig-early',
       bars: [7, 10, 13, 17, 20],
-      outlook: 'Industrial-adjacent zone with DMIC tailwinds. Mirrors early Dwarka Expressway dynamics from 2015–18. Highest rental yield in the tracked universe.'
+      outlook: 'Industrial-adjacent zone with DMIC and KMP tailwinds. Demand dynamics mirror early Dwarka Expressway corridor development. Rental stability underpinned by workforce housing demand.'
     }
   };
 
@@ -1633,9 +1800,9 @@
     sig.textContent = d.signal;
     sig.className = 'sig-badge ' + d.signalClass;
     document.getElementById('modal-metrics').innerHTML =
-      '<div class="modal-metric"><span class="modal-metric-val">' + d.price + '</span><span class="modal-metric-label">Price / sqft</span></div>' +
-      '<div class="modal-metric"><span class="modal-metric-val" style="color:var(--green)">' + d.appr + '</span><span class="modal-metric-label">3yr Appreciation</span></div>' +
-      '<div class="modal-metric"><span class="modal-metric-val" style="color:var(--blue)">' + d.yield + '</span><span class="modal-metric-label">Rental Yield</span></div>';
+      '<div class="modal-metric"><span class="modal-metric-val">' + d.m1 + '</span><span class="modal-metric-label">' + d.m1l + '</span></div>' +
+      '<div class="modal-metric"><span class="modal-metric-val" style="color:var(--green)">' + d.m2 + '</span><span class="modal-metric-label">' + d.m2l + '</span></div>' +
+      '<div class="modal-metric"><span class="modal-metric-val" style="color:var(--blue)">' + d.m3 + '</span><span class="modal-metric-label">' + d.m3l + '</span></div>';
     var maxBar = Math.max.apply(null, d.bars);
     document.getElementById('modal-chart-bars').innerHTML = d.bars.map(function(v) {
       return '<div class="chart-bar" style="height:' + Math.round(v / maxBar * 100) + '%" title="+' + v + '%"></div>';
@@ -1650,6 +1817,13 @@
     document.body.classList.remove('modal-open');
   }
 
+  function toggleInfra(btn, id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('open');
+    btn.textContent = el.classList.contains('open') ? 'Hide Influence ↑' : 'View Influence →';
+  }
+
 </script>
 
 <!-- ─── SECTOR MODAL ─── -->
@@ -1660,14 +1834,14 @@
     <div class="modal-corridor" id="modal-corridor"></div>
     <span class="sig-badge" id="modal-signal"></span>
     <div class="modal-metrics" id="modal-metrics"></div>
-    <div class="modal-chart-label">3-Year Appreciation Trend</div>
+    <div class="modal-chart-label">Demand Activity Trend</div>
     <div class="chart-bars" id="modal-chart-bars"></div>
     <div class="chart-years">
-      <span class="chart-year">2021</span>
-      <span class="chart-year">2022</span>
-      <span class="chart-year">2023</span>
-      <span class="chart-year">2024</span>
-      <span class="chart-year">2025</span>
+      <span class="chart-year">Y1</span>
+      <span class="chart-year">Y2</span>
+      <span class="chart-year">Y3</span>
+      <span class="chart-year">Y4</span>
+      <span class="chart-year">Y5</span>
     </div>
     <div class="modal-outlook" id="modal-outlook"></div>
     <button class="modal-cta-btn" id="modal-cta-btn">Get Investment Guidance &#x2192;</button>
