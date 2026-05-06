@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { getOpportunities, setOpportunities, Opportunity } from "@/lib/storage";
 import TopBar from "@/components/dashboard/TopBar";
+import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
+import { Lightbulb as LightIcon } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { cn } from "@/lib/utils";
 import { Lightbulb, Plus, Trash2 } from "lucide-react";
@@ -133,6 +135,24 @@ export default function IntelligencePage() {
           </div>
         </div>
       </div>
+
+      <EmbeddedAgent
+        agentName="Competitor & Market Intelligence Agent"
+        agentIcon={<LightIcon size={13} className="text-accent-bright" />}
+        systemPrompt={`You are a market intelligence analyst and competitive strategy expert for Indian D2C, creator, and consumer brands.
+Opportunities logged by the founder: ${opportunities.map((o) => o.title + " (" + o.category + ")").join(", ") || "none yet"}.
+Your role: Identify market white spaces, analyse competitors, spot emerging trends, and find first-mover opportunities.
+Be specific about the Indian market. Give actionable intelligence the founder can act on this week.
+Think like a McKinsey analyst meets a startup founder — data-informed and action-oriented.`}
+        quickActions={[
+          { label: "Analyse my competitors and find gaps", prompt: "Perform a competitive analysis of my market. Identify what my competitors are doing well, where they're weak, and the specific gaps I can exploit to differentiate." },
+          { label: "What are the top 3 market opportunities right now?", prompt: "Based on current Indian market trends in D2C and consumer brands, what are the 3 highest-potential white space opportunities I should be looking at right now?" },
+          { label: "Find my differentiation strategy", prompt: "Help me find my sharpest differentiation strategy. How should I position myself so I'm not competing on price but on value, identity, and experience?" },
+          { label: "What trends should I watch this quarter?", prompt: "What are the 5 most important market and consumer trends I should be tracking this quarter that could impact my business?" },
+          { label: "SWOT analysis of my business", prompt: "Run a SWOT analysis of my business based on what you know about my stage, model, and market. Be honest about the weaknesses and threats." },
+          { label: "Find a blue ocean opportunity for me", prompt: "Help me find a blue ocean opportunity — a market space where I can create demand rather than compete for existing demand. Think creatively." },
+        ]}
+      />
     </div>
   );
 }

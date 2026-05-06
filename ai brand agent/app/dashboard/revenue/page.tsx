@@ -9,6 +9,8 @@ import {
 import { addRevenue, getRevenue, RevenueEntry } from "@/lib/storage";
 import { formatCurrency, today, getLast30Days, dayLabel } from "@/lib/utils";
 import TopBar from "@/components/dashboard/TopBar";
+import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
+import { TrendingUp as TrendIcon } from "lucide-react";
 import KPICard from "@/components/ui/KPICard";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { TrendingUp, Plus, IndianRupee } from "lucide-react";
@@ -191,6 +193,23 @@ export default function RevenuePage() {
           )}
         </div>
       </div>
+
+      <EmbeddedAgent
+        agentName="Revenue Agent"
+        agentIcon={<TrendIcon size={13} className="text-accent-bright" />}
+        systemPrompt={`You are an elite revenue strategist for a founder. Analyse their revenue data and give sharp, specific growth advice.
+Revenue entries: ${entries.length} logged. Total: ₹${totalRevenue.toLocaleString("en-IN")}. This month: ₹${thisMonth.toLocaleString("en-IN")}.
+Revenue sources: ${bySource.map((s) => s.source + ": ₹" + s.amount.toLocaleString("en-IN")).join(", ") || "Not logged yet"}.
+Focus on: revenue growth levers, pricing, upsells, conversion, product mix, and reducing dependency on one source.
+Be direct. Give revenue tactics, not motivation.`}
+        quickActions={[
+          { label: "Forecast my next month revenue", prompt: "Based on my current revenue trend, forecast what I should realistically hit next month and what I need to do to get there." },
+          { label: "Find my highest ROI revenue activity", prompt: "Analyse my revenue sources and tell me which activity or product is generating the best return. What should I double down on?" },
+          { label: "Give me 3 upsell ideas for my business", prompt: "Based on my business type and current revenue, give me 3 specific upsell or cross-sell ideas I can implement this week." },
+          { label: "Build a pricing strategy for my products", prompt: "Help me build a stronger pricing strategy. How should I position my price points to maximise revenue without losing customers?" },
+          { label: "How do I hit ₹1L/month faster?", prompt: "Give me a concrete 30-day plan to accelerate my revenue growth toward ₹1 lakh per month." },
+        ]}
+      />
     </div>
   );
 }

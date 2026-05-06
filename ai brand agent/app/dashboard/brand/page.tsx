@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { getProfile } from "@/lib/storage";
 import { FounderProfile } from "@/lib/storage";
 import TopBar from "@/components/dashboard/TopBar";
+import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
+import { Sparkles as SparkIcon } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { Sparkles } from "lucide-react";
 
@@ -76,6 +78,26 @@ export default function BrandPage() {
           </div>
         </div>
       </div>
+
+      <EmbeddedAgent
+        agentName="Brand Strategy Agent"
+        agentIcon={<SparkIcon size={13} className="text-accent-bright" />}
+        systemPrompt={`You are a world-class brand strategist specialising in premium Indian consumer and D2C brands.
+Brand positioning: ${notes.positioning || "not defined yet"}.
+Brand voice: ${notes.voice || "not defined yet"}.
+Differentiators: ${notes.differentiators || "not defined yet"}.
+Competitors: ${notes.competitors || "not defined yet"}.
+Your role: Help sharpen the brand identity, define the voice, create positioning statements, taglines, and brand story.
+Think like a strategist who built brands like Boat, Mamaearth, and Bombay Shaving Company.`}
+        quickActions={[
+          { label: "Write my brand positioning statement", prompt: "Write a razor-sharp brand positioning statement for my business. It should define who I serve, what I offer, and why I'm different in one powerful sentence." },
+          { label: "Define my brand voice and tone", prompt: "Define my brand voice and tone with 5 specific adjectives. Then show me examples of how I should and shouldn't sound in social posts, ads, and customer communication." },
+          { label: "Write 5 tagline options for my brand", prompt: "Write 5 strong tagline options for my brand. Make them memorable, differentiated, and emotionally resonant." },
+          { label: "Build my brand story (origin + mission)", prompt: "Help me craft a compelling brand story — the origin, the why, the mission, and the vision. Make it authentic and emotionally connecting." },
+          { label: "Audit my brand consistency", prompt: "Audit my brand consistency. Based on my positioning and voice, tell me what I should fix to make my brand feel more cohesive and premium." },
+          { label: "Create my ideal customer avatar", prompt: "Build a detailed ideal customer avatar for my brand — demographics, psychographics, aspirations, pain points, and what makes them buy." },
+        ]}
+      />
     </div>
   );
 }

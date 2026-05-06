@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import TopBar from "@/components/dashboard/TopBar";
+import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
+import { Megaphone } from "lucide-react";
 import KPICard from "@/components/ui/KPICard";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { getProfile, getMarketingData, setMarketingData } from "@/lib/storage";
@@ -366,6 +368,25 @@ export default function MarketingPage() {
           </div>
         )}
       </div>
+
+      <EmbeddedAgent
+        agentName="Marketing Agent"
+        agentIcon={<Megaphone size={13} className="text-accent-bright" />}
+        systemPrompt={`You are an elite marketing strategist and content director specialising in Indian D2C and creator brands.
+Your job: give sharp, actionable marketing advice — content ideas, hooks, captions, posting strategy, collab scripts, ad copy, and growth tactics.
+Current platform data: ${JSON.stringify(platforms.slice(0, 3))}
+Target audience: ${profile?.targetAudience ?? "Indian millennials"}
+Brand: ${profile?.brandPositioning ?? "premium brand"}
+Be specific. Give ready-to-use outputs, not generic advice.`}
+        quickActions={[
+          { label: "Write 5 viral Instagram hooks for my next reel", prompt: "Write 5 viral Instagram hook lines for my next reel. Make them scroll-stopping and relevant to my brand positioning." },
+          { label: "Build a 7-day content calendar", prompt: "Build a 7-day content calendar for my brand with specific post ideas for each day — mix of reels, carousels, stories, and static posts." },
+          { label: "Write an influencer outreach DM script", prompt: "Write a short, compelling DM script to pitch a collab to a micro-influencer. Keep it authentic, not salesy." },
+          { label: "Analyse my growth rate and what to improve", prompt: "Based on my current platform stats, analyse my growth rate and tell me the 3 highest-leverage things I should improve this month." },
+          { label: "Generate 10 caption ideas for product posts", prompt: "Generate 10 engaging captions for product showcase posts. Mix educational, emotional, and sales-oriented angles." },
+          { label: "Build a hashtag strategy for Instagram", prompt: "Build a hashtag strategy for my Instagram. Give me clusters of hashtags by size (niche, medium, broad) that I should rotate between." },
+        ]}
+      />
     </div>
   );
 }

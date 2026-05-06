@@ -9,6 +9,8 @@ import { addHabit, getHabits, HabitEntry } from "@/lib/storage";
 import { calcDisciplineScore, calcExecutionScore, calcMomentumScore } from "@/lib/scoring";
 import { today, getLast7Days, dayLabel } from "@/lib/utils";
 import TopBar from "@/components/dashboard/TopBar";
+import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
+import { Target as TargetIcon } from "lucide-react";
 import KPICard from "@/components/ui/KPICard";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { cn } from "@/lib/utils";
@@ -193,6 +195,23 @@ export default function PerformancePage() {
           )}
         </div>
       </div>
+
+      <EmbeddedAgent
+        agentName="Discipline Coach"
+        agentIcon={<TargetIcon size={13} className="text-accent-bright" />}
+        systemPrompt={`You are a ruthlessly honest high-performance discipline coach for a founder.
+Today's habits logged: Deep work ${todayHabit.deepWork}h, Sleep ${todayHabit.sleep}h, Workout: ${todayHabit.workout ? "yes" : "no"}, Outreach: ${todayHabit.outreach} contacts, Reading: ${todayHabit.reading ? "yes" : "no"}, Meditation: ${todayHabit.meditation ? "yes" : "no"}.
+7-day average momentum: ${avgMomentum}/100. Discipline score: ${avgDiscipline}/100.
+Your role: Hold them accountable. Don't be soft. Push them to execute with precision.
+Give concrete schedule advice, habit stacking, elimination of distractions, and execution frameworks.`}
+        quickActions={[
+          { label: "Diagnose my performance patterns", prompt: "Analyse my habit data and discipline scores. Tell me exactly what's pulling my performance down and how to fix it." },
+          { label: "Build my optimal daily routine", prompt: "Design an optimal daily routine for a high-performance founder based on my current habits and peak productivity window. Be specific with time blocks." },
+          { label: "I'm procrastinating — what do I do?", prompt: "I've been avoiding my most important task. Give me a 10-minute protocol to break the procrastination and get started right now." },
+          { label: "How do I build an unstoppable morning?", prompt: "Design a battle-tested morning routine that maximises my mental clarity, energy, and execution quality for the rest of the day." },
+          { label: "Accountability check — am I on track?", prompt: "Based on my habit data, give me an honest accountability check. Am I doing enough to hit my goals? What needs to change immediately?" },
+        ]}
+      />
     </div>
   );
 }

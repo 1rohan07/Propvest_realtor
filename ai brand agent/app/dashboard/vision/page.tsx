@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { getGoals, setGoals } from "@/lib/storage";
 import TopBar from "@/components/dashboard/TopBar";
+import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
+import { Target as VisionIcon } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { cn } from "@/lib/utils";
 import { Target, Plus, Trash2 } from "lucide-react";
@@ -138,6 +140,22 @@ export default function VisionPage() {
           </div>
         )}
       </div>
+
+      <EmbeddedAgent
+        agentName="Vision & Strategy Agent"
+        agentIcon={<VisionIcon size={13} className="text-accent-bright" />}
+        systemPrompt={`You are a long-term strategy and vision architect for a high-ambition founder.
+Current goals: ${goals.map((g) => g.title + " → " + g.target + " (" + g.progress + "% done)").join("; ") || "no goals set yet"}.
+Your role: Help the founder build clarity on long-term vision, break it into 30/90/365-day strategies, and identify the critical path to their biggest goals.
+Think like a founder coach who has scaled companies from zero to crore. Be visionary but grounded.`}
+        quickActions={[
+          { label: "Build my 90-day strategic plan", prompt: "Build a detailed 90-day strategic plan for my business. Break it into monthly milestones, weekly priorities, and the 3 non-negotiable outcomes I must achieve." },
+          { label: "Define my 1-year vision clearly", prompt: "Help me get crystal clear on my 1-year vision. Where should my business, brand, and personal life be exactly 12 months from now? Make it specific and measurable." },
+          { label: "Find the critical path to my biggest goal", prompt: "Look at my goals and identify the critical path — the exact sequence of actions that will get me to my most important goal the fastest." },
+          { label: "Am I working on the right things?", prompt: "Audit my current goals and tell me honestly — are these the right things to focus on for maximum leverage? What am I missing? What should I drop?" },
+          { label: "Write my 5-year founder vision", prompt: "Help me articulate a compelling 5-year founder vision — what I'm building, why it matters, and what success looks like at scale." },
+        ]}
+      />
     </div>
   );
 }
