@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PropVest — New Gurgaon Investment Intelligence</title>
-  <meta name="description" content="Track sector-level signals and identify real investment opportunities across New Gurgaon — before price movement becomes obvious." />
-  <meta property="og:title" content="PropVest — New Gurgaon Investment Intelligence" />
-  <meta property="og:description" content="Data-first. Investor-only. Emerging sectors. Understand where to invest in New Gurgaon before the market moves." />
+  <title>PropVest — New Gurgaon Real Estate Intelligence</title>
+  <meta name="description" content="Track sector-level signals across New Gurgaon — helping investors identify opportunities and home buyers find the right sector at the right time." />
+  <meta property="og:title" content="PropVest — New Gurgaon Real Estate Intelligence" />
+  <meta property="og:description" content="Data-first. Emerging sectors. Understand where to invest or buy your home in New Gurgaon before the market moves." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="PropVest — New Gurgaon Investment Intelligence" />
-  <meta name="twitter:description" content="Data-first. Investor-only. Emerging sectors. Understand where to invest in New Gurgaon before the market moves." />
+  <meta name="twitter:title" content="PropVest — New Gurgaon Real Estate Intelligence" />
+  <meta name="twitter:description" content="Data-first. Emerging sectors. Understand where to invest or buy your home in New Gurgaon before the market moves." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -177,6 +177,32 @@
     }
     .btn-primary:hover { background: #d4b562; transform: translateY(-1px); }
     .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      display: inline-block;
+      background: transparent;
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.82rem 2.2rem;
+      border-radius: 3px;
+      text-decoration: none;
+      border: 1.5px solid var(--gold);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-secondary:hover { background: rgba(201,168,76,0.1); transform: translateY(-1px); }
+    .btn-secondary:active { transform: translateY(0); }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+    }
 
     /* ─── SIGNALS PREVIEW ─── */
     .signals-wrap {
@@ -830,7 +856,8 @@
   <ul class="nav-links">
     <li><a href="#tracker">Sector Watch</a></li>
     <li><a href="#how">How It Works</a></li>
-    <li><a href="#invest">Invest</a></li>
+    <li><a href="#invest">Investors</a></li>
+    <li><a href="#homebuyer">Home Buyers</a></li>
     <li><a href="#builder">Builders</a></li>
     <li><a href="#infra">Infra</a></li>
   </ul>
@@ -839,12 +866,14 @@
 <!-- ─── HERO ─── -->
 <section id="hero">
   <div class="hero-label">New Gurgaon &nbsp;·&nbsp; Emerging Sectors</div>
-  <h1>New Gurgaon<br /><span>Investment Intelligence</span></h1>
-  <p class="hero-tagline">Understand where to invest before price movement becomes obvious.</p>
-  <p class="hero-desc">Track sector-level signals, demand shifts, and identify real investment opportunities across New Gurgaon.</p>
-  <p class="hero-act">PropVest helps you not just understand the market but also act on it.</p>
-  <a href="#invest" class="btn-primary">Explore Investment Guidance</a>
-  <p class="hero-trust">Built for investors actively looking to deploy capital in New Gurgaon</p>
+  <h1>New Gurgaon<br /><span>Real Estate Intelligence</span></h1>
+  <p class="hero-tagline">Understand where to buy — whether you're an investor or finding your home.</p>
+  <p class="hero-desc">Track sector-level signals, demand shifts, and identify the right opportunities across New Gurgaon — for capital growth or the perfect place to live.</p>
+  <div class="hero-ctas">
+    <a href="#invest" class="btn-primary">I'm an Investor →</a>
+    <a href="#homebuyer" class="btn-secondary">I'm a Home Buyer →</a>
+  </div>
+  <p class="hero-trust">Built for investors and home buyers navigating New Gurgaon</p>
 </section>
 
 <!-- ─── STATS BAR ─── -->
@@ -890,23 +919,23 @@
 <!-- ─── HOW PROPVEST HELPS ─── -->
 <section id="how">
   <div class="section-tag">Platform</div>
-  <h2 class="section-heading">How PropVest Helps You Invest</h2>
+  <h2 class="section-heading">How PropVest Helps You Decide</h2>
   <div class="divider"></div>
   <div class="how-grid">
     <div class="how-card">
       <div class="how-num">01</div>
       <h3>Market Clarity</h3>
-      <p>Understand which sectors are early-stage vs already saturated.</p>
+      <p>Understand which sectors are early-stage vs already saturated — whether you're buying to invest or to live.</p>
     </div>
     <div class="how-card">
       <div class="how-num">02</div>
-      <h3>Investment Direction</h3>
-      <p>Know where to allocate capital based on real demand and price signals.</p>
+      <h3>Sector Guidance</h3>
+      <p>Know which sectors suit your goal — rental returns, capital growth, or the right neighbourhood to call home.</p>
     </div>
     <div class="how-card">
       <div class="how-num">03</div>
       <h3>Execution Support</h3>
-      <p>Once you identify the right opportunity, PropVest helps you access and evaluate real investment options.</p>
+      <p>Once you identify the right sector, PropVest helps you access and evaluate options — for investment or end use.</p>
     </div>
   </div>
 </section>
@@ -927,7 +956,7 @@
           <th>Price / sqft</th>
           <th>3yr Appreciation</th>
           <th>Rental Yield</th>
-          <th>Investment Signal</th>
+          <th>Signal</th>
           <th></th>
         </tr>
       </thead>
@@ -1001,7 +1030,7 @@
     </div>
     <div class="insight-card">
       <div class="insight-num">03</div>
-      <p>Manesar GIC behaving like early-stage Dwarka Expressway — high risk, high upside</p>
+      <p>Sectors 93–95 seeing first-time buyer interest as prices remain accessible below ₹6,000/sqft — one of the few entry points left in New Gurgaon</p>
     </div>
   </div>
 </section>
@@ -1082,12 +1111,94 @@
   </div>
 </section>
 
+<!-- ─── HOME BUYER GUIDANCE FORM ─── -->
+<section id="homebuyer">
+  <div class="section-tag">Home Buyers</div>
+  <h2 class="section-heading">Find Your Home in New Gurgaon</h2>
+  <p class="section-sub">Tell us your needs. We'll match you with sectors and projects that fit your budget, timeline, and lifestyle — not just return metrics.</p>
+  <div class="divider"></div>
+
+  <div class="form-card">
+    <form id="homebuyerForm" novalidate>
+      <div class="form-grid">
+        <div>
+          <label for="hb-name">Name</label>
+          <input type="text" id="hb-name" placeholder="Priya Mehta" />
+          <div class="field-error" id="hb-name-err">Name is required.</div>
+        </div>
+        <div>
+          <label for="hb-phone">Phone Number</label>
+          <input type="tel" id="hb-phone" placeholder="+91 98765 43210" />
+          <div class="field-error" id="hb-phone-err">Valid phone number required.</div>
+        </div>
+        <div class="full">
+          <label for="hb-budget">Budget Range</label>
+          <select id="hb-budget">
+            <option value="">Select your budget</option>
+            <option value="Under ₹60L">Under ₹60L</option>
+            <option value="₹60L – ₹1.2Cr">₹60L – ₹1.2Cr</option>
+            <option value="₹1.2Cr – ₹2Cr">₹1.2Cr – ₹2Cr</option>
+            <option value="₹2Cr – ₹3.5Cr">₹2Cr – ₹3.5Cr</option>
+            <option value="₹3.5Cr+">₹3.5Cr+</option>
+          </select>
+          <div class="field-error" id="hb-budget-err">Please select your budget.</div>
+        </div>
+        <div>
+          <label for="hb-bhk">BHK Preference</label>
+          <select id="hb-bhk">
+            <option value="">Select BHK</option>
+            <option value="2 BHK">2 BHK</option>
+            <option value="3 BHK">3 BHK</option>
+            <option value="4 BHK+">4 BHK+</option>
+            <option value="Open to suggestions">Open to suggestions</option>
+          </select>
+          <div class="field-error" id="hb-bhk-err">Please select a BHK preference.</div>
+        </div>
+        <div>
+          <label for="hb-purpose">Purchase Purpose</label>
+          <select id="hb-purpose">
+            <option value="">Select purpose</option>
+            <option value="Ready to Move In">Ready to Move In</option>
+            <option value="Under Construction OK">Under Construction OK</option>
+            <option value="Looking at Plots">Looking at Plots</option>
+          </select>
+          <div class="field-error" id="hb-purpose-err">Please select a purpose.</div>
+        </div>
+        <div class="full">
+          <label for="hb-source">How did you find us?</label>
+          <select id="hb-source">
+            <option value="">Select source</option>
+            <option value="Instagram">Instagram</option>
+            <option value="AI">AI</option>
+            <option value="Reddit">Reddit</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="YouTube">YouTube</option>
+            <option value="Other">Other</option>
+          </select>
+          <div class="field-error" id="hb-source-err">Please select how you found us.</div>
+        </div>
+        <div class="full">
+          <button type="submit" class="btn-gold">Find My Home →</button>
+          <p class="form-note" style="margin-top:0.5rem;">By submitting, you consent to PropVest storing your details and contacting you about New Gurgaon home buying opportunities.</p>
+        </div>
+      </div>
+      <div class="field-error form-err" id="hb-form-err">Something went wrong. Please try again.</div>
+    </form>
+
+    <div class="success-msg" id="homebuyerSuccess">
+      <div class="success-icon">✦</div>
+      <p>We've received your details. We'll be in touch with sector matches and projects suited to your needs.</p>
+      <small>Guidance begins 15th June</small>
+    </div>
+  </div>
+</section>
+
 <!-- ─── INVESTMENT GUIDANCE FORM ─── -->
 <section id="invest">
   <div class="section-tag">Investment Guidance</div>
   <h2 class="section-heading">Explore Investment Opportunities with PropVest</h2>
   <p class="section-sub">Share your investment range and goals. Based on market signals, we guide you toward relevant opportunities in New Gurgaon.</p>
-  <p class="section-note">This is not a generic listing platform — recommendations are aligned with your investment profile.</p>
+  <p class="section-note">This is not a generic listing platform — recommendations are aligned with your investment profile. Looking to buy a home? <a href="#homebuyer" style="color:var(--gold);">Use the Home Buyer form above ↑</a></p>
   <div class="divider"></div>
 
   <div class="form-card">
@@ -1129,7 +1240,7 @@
         </div>
         <div class="full">
           <button type="submit" class="btn-gold">Get Investment Guidance</button>
-          <p class="early-close">Early access batch closes soon — data access begins 1st June</p>
+          <p class="early-close">Early access batch closes soon — data access begins 15th June</p>
           <p class="form-note" style="margin-top:0.5rem;">By submitting, you consent to PropVest storing your details and contacting you about New Gurgaon investment opportunities.</p>
         </div>
       </div>
@@ -1144,7 +1255,7 @@
   </div>
 
   <div class="launch-context">
-    <p class="launch-heading">🚀 Full Investment Insights Launching on 1st June</p>
+    <p class="launch-heading">🚀 Full Investment Insights Launching on 15th June</p>
     <p>We're currently building a sector-level data engine for New Gurgaon.</p>
     <p>All submissions are being onboarded for early access.</p>
     <p class="launch-sub">You'll receive:</p>
@@ -1153,15 +1264,15 @@
       <li>Market insights based on your investment profile</li>
       <li>Select opportunities aligned with timing (not mass listings)</li>
     </ul>
-    <p class="launch-date">Access will be shared starting 1st June.</p>
+    <p class="launch-date">Access will be shared starting 15th June.</p>
   </div>
 </section>
 
 <!-- ─── BUILDER FORM ─── -->
 <section id="builder">
   <div class="section-tag">For Developers &amp; Builders</div>
-  <h2 class="section-heading">Access Qualified Investor Demand</h2>
-  <p class="section-sub">List your project to reach investors actively evaluating New Gurgaon opportunities through PropVest.</p>
+  <h2 class="section-heading">Access Qualified Buyer &amp; Investor Demand</h2>
+  <p class="section-sub">List your project to reach investors and home buyers actively evaluating New Gurgaon through PropVest.</p>
   <div class="divider"></div>
 
   <div class="form-card">
@@ -1212,10 +1323,10 @@
   <div class="footer-top">
     <div class="footer-brand">
       <div class="logo">PROP<span>VEST</span></div>
-      <p>New Gurgaon Investment Intelligence</p>
+      <p>New Gurgaon Real Estate Intelligence</p>
     </div>
     <div class="footer-mid">
-      <p>Tracking New Gurgaon's emerging sectors weekly</p>
+      <p>Serving investors and home buyers in New Gurgaon</p>
     </div>
     <div class="footer-right">
       <a href="https://instagram.com/PropVest_Realtor" target="_blank" rel="noopener">
@@ -1288,6 +1399,55 @@
     .catch(function() {
       btn.disabled = false;
       btn.textContent = 'Get Investment Guidance';
+      formErr.classList.add('show');
+    });
+  });
+
+  /* ── home buyer form ── */
+  document.getElementById('homebuyerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var form = this;
+    var ok = true;
+    var fields = [
+      { id: 'hb-name',    err: 'hb-name-err',    check: function(v) { return v.trim().length > 1; } },
+      { id: 'hb-phone',   err: 'hb-phone-err',   check: isValidPhone },
+      { id: 'hb-budget',  err: 'hb-budget-err',  check: function(v) { return v !== ''; } },
+      { id: 'hb-bhk',     err: 'hb-bhk-err',     check: function(v) { return v !== ''; } },
+      { id: 'hb-purpose', err: 'hb-purpose-err', check: function(v) { return v !== ''; } },
+      { id: 'hb-source',  err: 'hb-source-err',  check: function(v) { return v !== ''; } },
+    ];
+    fields.forEach(function(f) {
+      var val = document.getElementById(f.id).value;
+      if (!f.check(val)) { showErr(f.id, f.err); ok = false; }
+      else clearErr(f.id, f.err);
+    });
+    if (!ok) return;
+
+    var btn = form.querySelector('button[type="submit"]');
+    var formErr = document.getElementById('hb-form-err');
+    formErr.classList.remove('show');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    fetch('https://script.google.com/macros/s/AKfycbyRdAiat6_NZiSDrRJUN5V2I3_jpZAyA1qkzvLqLWEKOJ3ixonCEyljsED_U35KL99xoA/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({
+        name:    document.getElementById('hb-name').value.trim(),
+        phone:   document.getElementById('hb-phone').value.trim(),
+        budget:  document.getElementById('hb-budget').value,
+        bhk:     document.getElementById('hb-bhk').value,
+        purpose: document.getElementById('hb-purpose').value,
+        source:  document.getElementById('hb-source').value,
+      }),
+    })
+    .then(function() {
+      form.style.display = 'none';
+      document.getElementById('homebuyerSuccess').style.display = 'block';
+    })
+    .catch(function() {
+      btn.disabled = false;
+      btn.textContent = 'Find My Home →';
       formErr.classList.add('show');
     });
   });
