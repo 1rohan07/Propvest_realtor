@@ -112,3 +112,137 @@ button {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ─── Premium glow effects ─── */
+.glow-green {
+  box-shadow: 0 0 40px rgba(74, 124, 89, 0.18), 0 0 80px rgba(74, 124, 89, 0.07);
+}
+.glow-card {
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255,255,255,0.03) inset;
+}
+.glow-border {
+  box-shadow: 0 0 0 1px rgba(74, 124, 89, 0.4), 0 0 20px rgba(74, 124, 89, 0.12);
+}
+
+/* ─── Insight card type borders ─── */
+.insight-opportunity { border-left: 2px solid #6aaf7e; }
+.insight-warning     { border-left: 2px solid #e05252; }
+.insight-trend       { border-left: 2px solid #60a5fa; }
+.insight-prediction  { border-left: 2px solid #a78bfa; }
+
+/* ─── Hero gradient overlay ─── */
+.hero-gradient {
+  background: radial-gradient(ellipse 80% 40% at 20% 20%, rgba(74, 124, 89, 0.07) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 30% at 80% 80%, rgba(74, 124, 89, 0.04) 0%, transparent 60%);
+}
+
+/* ─── Shimmer skeleton ─── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite;
+}
+
+/* ─── Pulse animations ─── */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+.pulse-soft { animation: pulse-soft 2.5s ease-in-out infinite; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+.float { animation: float 4s ease-in-out infinite; }
+
+/* ─── Status indicator ─── */
+.status-live {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.status-live::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.4;
+  animation: pulse-soft 2s infinite;
+}
+
+/* ─── Premium glass variants ─── */
+.glass-premium {
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.glass-accent {
+  background: rgba(45, 79, 56, 0.25);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 124, 89, 0.3);
+}
+
+/* ─── Command palette backdrop ─── */
+.cmd-backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+}
+
+/* ─── Priority card size variants ─── */
+.priority-card-hero {
+  background: linear-gradient(135deg, rgba(74,124,89,0.12) 0%, rgba(74,124,89,0.04) 100%);
+  border: 1px solid rgba(74, 124, 89, 0.25);
+}
+
+/* ─── Mode badge colours ─── */
+.mode-growth      { color: #6aaf7e; border-color: rgba(106,175,126,0.3); background: rgba(106,175,126,0.08); }
+.mode-survival    { color: #f87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.08); }
+.mode-brand       { color: #c084fc; border-color: rgba(192,132,252,0.3); background: rgba(192,132,252,0.08); }
+.mode-fundraising { color: #60a5fa; border-color: rgba(96,165,250,0.3);  background: rgba(96,165,250,0.08); }
+.mode-operations  { color: #facc15; border-color: rgba(250,204,21,0.3);  background: rgba(250,204,21,0.08); }
+.mode-sprint      { color: #fb923c; border-color: rgba(251,146,60,0.3);  background: rgba(251,146,60,0.08); }
+
+/* ─── Smooth hover lift ─── */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* ─── Gradient text variants ─── */
+.gradient-text-cool {
+  background: linear-gradient(135deg, #f0f0f0 0%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gradient-text-warm {
+  background: linear-gradient(135deg, #f0f0f0 0%, #fb923c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Confidence bar ─── */
+.confidence-bar {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.confidence-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-bright) 100%);
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}

@@ -75,6 +75,19 @@ export interface Opportunity {
   date: string;
 }
 
+export type FounderMode = "growth" | "survival" | "brand" | "fundraising" | "operations" | "sprint";
+
+export interface FounderMemory {
+  goals: string;
+  currentExperiments: string;
+  biggestWin: string;
+  currentChallenge: string;
+  nextMilestone: string;
+  preferredStrategy: string;
+  energyLevel: "high" | "medium" | "low";
+  updatedAt: string;
+}
+
 const KEYS = {
   profile: "founder_profile",
   revenue: "revenue_entries",
@@ -84,6 +97,8 @@ const KEYS = {
   opportunities: "opportunities",
   goals: "founder_goals",
   marketing: "marketing_data",
+  mode: "founder_mode",
+  memory: "founder_memory",
 };
 
 function get<T>(key: string): T | null {
@@ -145,3 +160,10 @@ export const getMarketingData = () =>
   get<Record<string, unknown>>(KEYS.marketing) ?? {};
 export const setMarketingData = (data: Record<string, unknown>) =>
   set(KEYS.marketing, data);
+
+export const getFounderMode = (): FounderMode =>
+  get<FounderMode>(KEYS.mode) ?? "growth";
+export const setFounderMode = (mode: FounderMode) => set(KEYS.mode, mode);
+
+export const getFounderMemory = () => get<FounderMemory>(KEYS.memory);
+export const setFounderMemory = (m: FounderMemory) => set(KEYS.memory, m);
