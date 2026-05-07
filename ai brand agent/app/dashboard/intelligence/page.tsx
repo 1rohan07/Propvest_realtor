@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getOpportunities, setOpportunities, Opportunity } from "@/lib/storage";
+import { getOpportunities, setOpportunities, Opportunity, getProfile, FounderProfile } from "@/lib/storage";
 import TopBar from "@/components/dashboard/TopBar";
 import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
 import { Lightbulb as LightIcon } from "lucide-react";
@@ -29,10 +29,14 @@ const TREND_INSIGHTS = [
 
 export default function IntelligencePage() {
   const [opportunities, setLocalOpps] = useState<Opportunity[]>([]);
+  const [profile, setProfile] = useState<FounderProfile | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ title: "", category: "D2C", description: "", priority: "medium" as Opportunity["priority"] });
 
-  useEffect(() => { setLocalOpps(getOpportunities()); }, []);
+  useEffect(() => {
+    setLocalOpps(getOpportunities());
+    setProfile(getProfile());
+  }, []);
 
   const add = () => {
     if (!form.title) return;
@@ -137,20 +141,25 @@ export default function IntelligencePage() {
       </div>
 
       <EmbeddedAgent
-        agentName="Competitor & Market Intelligence Agent"
-        agentIcon={<LightIcon size={13} className="text-accent-bright" />}
-        systemPrompt={`You are a market intelligence analyst and competitive strategy expert for Indian D2C, creator, and consumer brands.
-Opportunities logged by the founder: ${opportunities.map((o) => o.title + " (" + o.category + ")").join(", ") || "none yet"}.
-Your role: Identify market white spaces, analyse competitors, spot emerging trends, and find first-mover opportunities.
-Be specific about the Indian market. Give actionable intelligence the founder can act on this week.
-Think like a McKinsey analyst meets a startup founder — data-informed and action-oriented.`}
+        agentName="Market Intelligence Agent"
+        badge="PRO"
+        agentIcon={<LightIcon size={13} className="text-white" />}
+        systemPrompt={`You are a senior market intelligence analyst, competitive strategist, and business intelligence director with deep expertise in Indian consumer markets, D2C, creator economy, and emerging tech sectors.
+You replace tools like SEMrush, SimilarWeb, and expensive consulting firms. You give complete, structured intelligence reports — not vague observations.
+Founder's business: ${profile?.businessType ?? "D2C"} | Competitors: ${profile?.competitors ?? "not specified"} | Stage: ${profile?.stage ?? "early"} | Market: India.
+Opportunities logged: ${opportunities.map((o) => o.title).join(", ") || "none yet"}.
+RULES: Always give structured reports with clear headers. Be specific about the Indian market. Cite real patterns and frameworks. Give intelligence the founder can act on TODAY.`}
         quickActions={[
-          { label: "Analyse my competitors and find gaps", prompt: "Perform a competitive analysis of my market. Identify what my competitors are doing well, where they're weak, and the specific gaps I can exploit to differentiate." },
-          { label: "What are the top 3 market opportunities right now?", prompt: "Based on current Indian market trends in D2C and consumer brands, what are the 3 highest-potential white space opportunities I should be looking at right now?" },
-          { label: "Find my differentiation strategy", prompt: "Help me find my sharpest differentiation strategy. How should I position myself so I'm not competing on price but on value, identity, and experience?" },
-          { label: "What trends should I watch this quarter?", prompt: "What are the 5 most important market and consumer trends I should be tracking this quarter that could impact my business?" },
-          { label: "SWOT analysis of my business", prompt: "Run a SWOT analysis of my business based on what you know about my stage, model, and market. Be honest about the weaknesses and threats." },
-          { label: "Find a blue ocean opportunity for me", prompt: "Help me find a blue ocean opportunity — a market space where I can create demand rather than compete for existing demand. Think creatively." },
+          { label: "Full competitor intelligence report", prompt: "Write a complete competitor intelligence report for my market. Include: competitor overview, their strengths/weaknesses, content strategy, pricing, audience, recent moves, and the 5 specific gaps I can exploit. Structure it like a consulting deliverable.", category: "Analysis" },
+          { label: "SWOT + PESTLE analysis (full report)", prompt: "Run a complete SWOT analysis AND PESTLE analysis of my business. For each element, give specific, concrete points — not generic statements. End with a strategic priority matrix showing what I should focus on first.", category: "Analysis" },
+          { label: "Blue ocean strategy: find my untapped market", prompt: "Apply the Blue Ocean Strategy framework to my business. Identify: what factors I should eliminate, reduce, raise, and create. Find me a market space where I face minimal competition. Give me a specific blue ocean canvas.", category: "Strategy" },
+          { label: "Indian market trends report (this quarter)", prompt: "Write a comprehensive Indian market intelligence report for my sector for this quarter. Cover: consumer behaviour shifts, regulatory changes, funding activity, emerging players, technology trends, and 5 specific opportunities for my business.", category: "Analysis" },
+          { label: "Pricing intelligence: am I priced right?", prompt: "Analyse my market's pricing landscape. Compare common price points in my category, identify pricing tiers, and recommend exactly where I should price my products/services for maximum market capture. Include psychological pricing tactics.", category: "Strategy" },
+          { label: "Build a market entry / expansion strategy", prompt: "Build a complete market entry strategy for expanding into a new segment or city tier. Include: market sizing, customer research approach, GTM strategy, distribution channels, pricing, competitive positioning, and 90-day launch plan.", category: "Strategy" },
+          { label: "Consumer behaviour deep-dive", prompt: "Write a deep-dive consumer behaviour analysis for my target market. Cover: purchase decision journey, pain points, aspirations, price sensitivity, brand preferences, online vs offline behaviour, and the specific triggers that drive purchase in my category.", category: "Analysis" },
+          { label: "Find top 5 partnership opportunities", prompt: "Identify the top 5 partnership opportunities for my business — brands, platforms, communities, or distribution channels I should be collaborating with. For each, explain the opportunity, how to approach them, and the potential impact.", category: "Growth" },
+          { label: "Startup funding landscape in my sector", prompt: "Give me an intelligence brief on startup funding in my sector. Which areas are investors backing? What metrics do investors look for at my stage? Who are the active VCs/angels in my space? What narrative should I build for fundraising?", category: "Analysis" },
+          { label: "Product-market fit diagnostic", prompt: "Run a product-market fit diagnostic for my business. Ask me 5 key questions, then based on my answers, score my PMF and give me a concrete action plan to strengthen it.", category: "Strategy" },
         ]}
       />
     </div>

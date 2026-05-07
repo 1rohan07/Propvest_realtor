@@ -6,7 +6,7 @@ import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip,
   ResponsiveContainer, CartesianGrid
 } from "recharts";
-import { addRevenue, getRevenue, RevenueEntry } from "@/lib/storage";
+import { addRevenue, getRevenue, RevenueEntry, getProfile, FounderProfile } from "@/lib/storage";
 import { formatCurrency, today, getLast30Days, dayLabel } from "@/lib/utils";
 import TopBar from "@/components/dashboard/TopBar";
 import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
@@ -31,10 +31,14 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function RevenuePage() {
   const [entries, setEntries] = useState<RevenueEntry[]>([]);
+  const [profile, setProfile] = useState<FounderProfile | null>(null);
   const [form, setForm] = useState({ date: today(), amount: "", source: "Product Sales", note: "" });
   const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => { setEntries(getRevenue()); }, []);
+  useEffect(() => {
+    setEntries(getRevenue());
+    setProfile(getProfile());
+  }, []);
 
   const handleAdd = () => {
     if (!form.amount) return;
@@ -195,19 +199,24 @@ export default function RevenuePage() {
       </div>
 
       <EmbeddedAgent
-        agentName="Revenue Agent"
-        agentIcon={<TrendIcon size={13} className="text-accent-bright" />}
-        systemPrompt={`You are an elite revenue strategist for a founder. Analyse their revenue data and give sharp, specific growth advice.
-Revenue entries: ${entries.length} logged. Total: ₹${totalRevenue.toLocaleString("en-IN")}. This month: ₹${thisMonth.toLocaleString("en-IN")}.
-Revenue sources: ${bySource.map((s) => s.source + ": ₹" + s.amount.toLocaleString("en-IN")).join(", ") || "Not logged yet"}.
-Focus on: revenue growth levers, pricing, upsells, conversion, product mix, and reducing dependency on one source.
-Be direct. Give revenue tactics, not motivation.`}
+        agentName="Revenue Growth Agent"
+        badge="PRO"
+        agentIcon={<TrendIcon size={13} className="text-white" />}
+        systemPrompt={`You are a world-class revenue strategist, pricing architect, and growth consultant. You replace expensive financial advisors and business consultants.
+Founder's data: Business type: ${profile?.businessType ?? "D2C"} | Stage: ${profile?.stage ?? "early"} | Revenue target: ${profile?.targetRevenue ?? "not set"} | Team: ${profile?.teamSize ?? "solo"} | AOV: ${profile?.avgOrderValue ?? "unknown"}.
+Revenue logged: ${entries.length} entries | Total: ₹${totalRevenue.toLocaleString("en-IN")} | This month: ₹${thisMonth.toLocaleString("en-IN")} | MoM growth: ${mom > 0 ? "+" : ""}${mom}% | Sources: ${bySource.map((s) => s.source + " ₹" + s.amount.toLocaleString("en-IN")).join(", ") || "none logged"}.
+RULES: Give specific numbers, frameworks, and action plans. Never give generic advice. Always give a complete, structured response with clear action steps. You are the founder's CFO + revenue consultant in one.`}
         quickActions={[
-          { label: "Forecast my next month revenue", prompt: "Based on my current revenue trend, forecast what I should realistically hit next month and what I need to do to get there." },
-          { label: "Find my highest ROI revenue activity", prompt: "Analyse my revenue sources and tell me which activity or product is generating the best return. What should I double down on?" },
-          { label: "Give me 3 upsell ideas for my business", prompt: "Based on my business type and current revenue, give me 3 specific upsell or cross-sell ideas I can implement this week." },
-          { label: "Build a pricing strategy for my products", prompt: "Help me build a stronger pricing strategy. How should I position my price points to maximise revenue without losing customers?" },
-          { label: "How do I hit ₹1L/month faster?", prompt: "Give me a concrete 30-day plan to accelerate my revenue growth toward ₹1 lakh per month." },
+          { label: "Full revenue growth plan (30-60-90 days)", prompt: "Build a complete 30-60-90 day revenue growth plan for my business. For each phase: specific revenue target, top 3 activities, key metrics to track, and what success looks like. Make it specific to my current stage and revenue.", category: "Strategy" },
+          { label: "Pricing architecture: full rebuild", prompt: "Redesign my entire pricing architecture. Analyse my current AOV, suggest optimal price points, create a good-better-best tier structure, identify where I'm leaving money on the table, and give me a pricing rollout plan.", category: "Finance" },
+          { label: "Build a complete upsell & cross-sell funnel", prompt: "Design a complete upsell and cross-sell system for my business. Include: when to offer upsells (pre-purchase, post-purchase, at checkout), what to offer, how to present it, and realistic revenue uplift I can expect.", category: "Growth" },
+          { label: "Revenue diversification strategy", prompt: "My revenue is too concentrated. Build a revenue diversification strategy with 3-5 new income streams I can add in the next 90 days. For each: how to launch it, expected revenue, effort required, and timeline.", category: "Strategy" },
+          { label: "Customer LTV maximisation playbook", prompt: "Build a complete customer lifetime value maximisation playbook. Include: how to calculate my current LTV, strategies to increase repeat purchase rate, loyalty programme design, reactivation campaigns for churned customers, and 90-day implementation plan.", category: "Growth" },
+          { label: "Sales conversion rate audit + fixes", prompt: "Run a conversion rate audit for my business. Identify the top 5 places where I'm losing customers (awareness → consideration → purchase → retention). For each leakage point, give me specific fixes I can implement this week.", category: "Finance" },
+          { label: "Build a cash flow management system", prompt: "Build a simple but effective cash flow management system for my stage. Include: what to track weekly, how to forecast 60 days ahead, when to reinvest vs save, and how to avoid cash crunches. Give me a framework I can run in a spreadsheet.", category: "Finance" },
+          { label: "Unit economics deep-dive", prompt: "Run a complete unit economics analysis for my business. Calculate or estimate: CAC, LTV, LTV:CAC ratio, payback period, gross margin, and contribution margin. Tell me if my unit economics are healthy and exactly what to fix if not.", category: "Finance" },
+          { label: "How to close ₹1 lakh in the next 30 days", prompt: "Give me a specific, day-by-day action plan to close ₹1 lakh in revenue in the next 30 days. Include: who to contact, what to offer, how to pitch, and what activities to prioritise each week.", category: "Growth" },
+          { label: "Build a recurring revenue stream", prompt: "Help me design a subscription or retainer model for my business to create predictable recurring revenue. Include: what to offer, pricing, how to sell it, how to retain subscribers, and realistic MRR targets for month 1, 3, and 6.", category: "Strategy" },
         ]}
       />
     </div>

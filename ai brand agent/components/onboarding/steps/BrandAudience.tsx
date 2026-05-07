@@ -90,7 +90,7 @@ export default function BrandAudienceStep({ data, onNext, onBack }: Props) {
           <input
             value={form.targetAudience}
             onChange={(e) => setForm((p) => ({ ...p, targetAudience: e.target.value }))}
-            placeholder="e.g. 18-30 year old fitness-conscious Indians"
+            placeholder="e.g. 22-35 year old urban professionals"
           />
         </div>
 
@@ -100,7 +100,7 @@ export default function BrandAudienceStep({ data, onNext, onBack }: Props) {
             rows={2}
             value={form.brandPositioning}
             onChange={(e) => setForm((p) => ({ ...p, brandPositioning: e.target.value }))}
-            placeholder="e.g. Premium athleisure for performance-focused millennials"
+            placeholder="e.g. Premium quality for performance-conscious urban buyers"
             className="resize-none"
           />
         </div>
@@ -110,7 +110,7 @@ export default function BrandAudienceStep({ data, onNext, onBack }: Props) {
           <input
             value={form.competitors}
             onChange={(e) => setForm((p) => ({ ...p, competitors: e.target.value }))}
-            placeholder="e.g. Decathlon, Nivia, Zymrat"
+            placeholder="e.g. Brand A, Brand B, Brand C"
           />
         </div>
       </div>

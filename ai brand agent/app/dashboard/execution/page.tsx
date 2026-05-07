@@ -233,18 +233,24 @@ export default function ExecutionPage() {
 
       <EmbeddedAgent
         agentName="Execution Agent"
-        agentIcon={<ZapIcon size={13} className="text-accent-bright" />}
-        systemPrompt={`You are a sharp execution and productivity strategist for a founder.
+        badge="PRO"
+        agentIcon={<ZapIcon size={13} className="text-white" />}
+        systemPrompt={`You are a world-class execution strategist, operations architect, and founder productivity expert. You replace expensive COOs and productivity consultants.
 Current task list for today: ${tasks.length} tasks total, ${completed}/${tasks.length} completed.
 High priority incomplete: ${high.map((t) => t.text).join(", ") || "none"}.
-Your role: Help the founder prioritise ruthlessly, eliminate busywork, and execute on what matters most.
-Give specific task breakdowns, priority frameworks (80/20, MIT, etc.), and execution scripts.`}
+Medium priority incomplete: ${medium.map((t) => t.text).join(", ") || "none"}.
+RULES: Be specific and ruthless. Never give generic productivity advice. Give concrete frameworks, exact task sequences, and decision protocols the founder can implement today. Always structure your response clearly with headers and action steps.`}
         quickActions={[
-          { label: "Prioritise my task list for maximum impact", prompt: "Look at my current tasks and tell me the exact order I should execute them in. Apply the 80/20 rule — which 2 tasks will drive 80% of my results today?" },
-          { label: "Break down my biggest task into steps", prompt: "Take my highest priority task and break it down into a step-by-step execution plan I can start right now. Make it specific and actionable." },
-          { label: "What should I NOT do today?", prompt: "Based on my task list, what tasks should I eliminate, delegate, or defer? Help me cut the busywork so I focus only on high-leverage work." },
-          { label: "Build my weekly execution system", prompt: "Help me design a weekly execution system — how should I structure my Monday to Sunday to maximise output and maintain momentum?" },
-          { label: "I have 2 hours — what's my best move?", prompt: "I have a focused 2-hour block right now. Given my tasks and goals, what is the single best use of this time and how should I structure it?" },
+          { label: "Prioritise my tasks: 80/20 impact filter", prompt: "Apply the 80/20 rule to my current task list. Tell me: which 2-3 tasks will drive 80% of today's results, which tasks I should eliminate or defer, and the exact sequence I should execute in. Give me a ranked list with a one-line reason for each.", category: "Planning" },
+          { label: "Break down my highest priority task", prompt: "Take my single highest priority incomplete task and break it down into micro-steps I can start immediately. Give me: the exact first action (under 2 minutes), a 15-minute quick start protocol, the full step-by-step breakdown, and potential blockers to anticipate.", category: "Focus" },
+          { label: "Build my weekly planning system (Monday blueprint)", prompt: "Design a complete weekly planning system for me. Include: Sunday review ritual (30 min), how to plan Monday-Friday with time blocks, how to set the 3 weekly non-negotiables, how to batch similar tasks, and how to protect deep work time from interruptions.", category: "Planning" },
+          { label: "Eliminate my busywork: delegation audit", prompt: "Audit my task list and business operations. Identify: which tasks are low-leverage busywork to eliminate, which can be delegated to a VA or team member (and exactly how to hand off), which can be automated, and which I must own personally. Give me a clear stop-doing list.", category: "Systems" },
+          { label: "Build a personal SOP library (system design)", prompt: "Help me build a personal Standard Operating Procedures library for my business. Identify the 5 most important recurring processes I should document, give me a simple SOP template, and write the first SOP for my most repeated task.", category: "Systems" },
+          { label: "I have 2 hours: highest leverage sprint plan", prompt: "I have a focused 2-hour block right now. Based on my tasks and priorities, give me: the single best use of this time, how to structure it in 25-minute focused sprints, what to do in the first 5 minutes to set up for success, and how to measure whether I used the time well.", category: "Focus" },
+          { label: "Delegation playbook: build a team leverage system", prompt: "Build a complete delegation playbook for my stage. Include: the 10 tasks a founder should always delegate, how to write a delegation brief, how to onboard a VA or junior team member in 48 hours, how to build accountability without micromanaging, and a delegation decision matrix.", category: "Leadership" },
+          { label: "Async work system: fewer meetings, more output", prompt: "Design a complete async work system to eliminate unnecessary meetings and increase output. Include: which meetings to cut immediately, how to replace them with async updates, communication protocols (Loom, Notion, voice notes), how to run a weekly team sync in under 30 minutes, and rules for when to use sync vs async.", category: "Systems" },
+          { label: "Decision framework for faster, better choices", prompt: "Build a founder decision-making framework for me. Include: a 3-question rapid decision filter for daily choices, when to use data vs intuition, how to make irreversible decisions without overthinking, how to run a pre-mortem before big decisions, and a framework for delegation vs ownership decisions.", category: "Leadership" },
+          { label: "Find automations: save 10+ hours per week", prompt: "Run an automation audit of my business. Identify the top 5-7 repetitive tasks I do every week, recommend specific tools or workflows to automate each one (Zapier, Make, AI tools, etc.), estimate time saved per task, and give me a prioritised implementation plan starting with the easiest wins.", category: "Systems" },
         ]}
       />
     </div>

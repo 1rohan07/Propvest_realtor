@@ -37,12 +37,12 @@ export default function FounderIdentityStep({ data, onNext }: Props) {
       <div className="space-y-5">
         <div>
           <label className="block text-xs text-muted uppercase tracking-wider mb-2">Your Name</label>
-          <input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Rohan Garg" />
+          <input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Your full name" />
         </div>
 
         <div>
           <label className="block text-xs text-muted uppercase tracking-wider mb-2">What are you building?</label>
-          <input value={form.biggestStrength} onChange={(e) => set("biggestStrength", e.target.value)} placeholder="e.g. Premium Athleisure Brand — Tuque" />
+          <input value={form.biggestStrength} onChange={(e) => set("biggestStrength", e.target.value)} placeholder="e.g. D2C Skincare Brand, SaaS for SMBs, Creator Agency" />
         </div>
 
         <div>
@@ -67,11 +67,11 @@ export default function FounderIdentityStep({ data, onNext }: Props) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs text-muted uppercase tracking-wider mb-2">Current Monthly Revenue</label>
-            <input value={form.currentRevenue} onChange={(e) => set("currentRevenue", e.target.value)} placeholder="₹10,000" />
+            <input value={form.currentRevenue} onChange={(e) => set("currentRevenue", e.target.value)} placeholder="e.g. ₹50,000" />
           </div>
           <div>
             <label className="block text-xs text-muted uppercase tracking-wider mb-2">Target Monthly Revenue</label>
-            <input value={form.targetRevenue} onChange={(e) => set("targetRevenue", e.target.value)} placeholder="₹1,00,000" />
+            <input value={form.targetRevenue} onChange={(e) => set("targetRevenue", e.target.value)} placeholder="e.g. ₹5,00,000" />
           </div>
         </div>
 
@@ -96,7 +96,7 @@ export default function FounderIdentityStep({ data, onNext }: Props) {
 
         <div>
           <label className="block text-xs text-muted uppercase tracking-wider mb-2">Biggest Weakness (honest)</label>
-          <input value={form.biggestWeakness} onChange={(e) => set("biggestWeakness", e.target.value)} placeholder="e.g. Inconsistent content, poor follow-up" />
+          <input value={form.biggestWeakness} onChange={(e) => set("biggestWeakness", e.target.value)} placeholder="e.g. Inconsistent execution, no clear sales process" />
         </div>
       </div>
 

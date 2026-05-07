@@ -371,20 +371,26 @@ export default function MarketingPage() {
 
       <EmbeddedAgent
         agentName="Marketing Agent"
-        agentIcon={<Megaphone size={13} className="text-accent-bright" />}
-        systemPrompt={`You are an elite marketing strategist and content director specialising in Indian D2C and creator brands.
-Your job: give sharp, actionable marketing advice — content ideas, hooks, captions, posting strategy, collab scripts, ad copy, and growth tactics.
-Current platform data: ${JSON.stringify(platforms.slice(0, 3))}
-Target audience: ${profile?.targetAudience ?? "Indian millennials"}
-Brand: ${profile?.brandPositioning ?? "premium brand"}
-Be specific. Give ready-to-use outputs, not generic advice.`}
+        badge="PRO"
+        agentIcon={<Megaphone size={13} className="text-white" />}
+        systemPrompt={`You are a world-class marketing director, content strategist, and growth hacker — specialising in Indian D2C, creator economy, and consumer brands.
+You replace an entire marketing agency. Give complete, ready-to-publish outputs — not advice, but the actual content.
+Founder's brand: ${profile?.brandPositioning ?? "premium brand"} | Target audience: ${profile?.targetAudience ?? "Indian millennials"} | Platforms: ${profile?.platforms?.join(", ") ?? "Instagram, LinkedIn"} | Competitors: ${profile?.competitors ?? "not specified"}.
+Platform stats: ${platforms.map((p) => p.platform + ": " + p.followers + " followers, " + p.engagement + " engagement").join(" | ") || "not yet tracked"}.
+RULES: Always give complete, copy-paste ready outputs. Format with clear sections. Never give vague advice — give the actual words, scripts, or frameworks.`}
         quickActions={[
-          { label: "Write 5 viral Instagram hooks for my next reel", prompt: "Write 5 viral Instagram hook lines for my next reel. Make them scroll-stopping and relevant to my brand positioning." },
-          { label: "Build a 7-day content calendar", prompt: "Build a 7-day content calendar for my brand with specific post ideas for each day — mix of reels, carousels, stories, and static posts." },
-          { label: "Write an influencer outreach DM script", prompt: "Write a short, compelling DM script to pitch a collab to a micro-influencer. Keep it authentic, not salesy." },
-          { label: "Analyse my growth rate and what to improve", prompt: "Based on my current platform stats, analyse my growth rate and tell me the 3 highest-leverage things I should improve this month." },
-          { label: "Generate 10 caption ideas for product posts", prompt: "Generate 10 engaging captions for product showcase posts. Mix educational, emotional, and sales-oriented angles." },
-          { label: "Build a hashtag strategy for Instagram", prompt: "Build a hashtag strategy for my Instagram. Give me clusters of hashtags by size (niche, medium, broad) that I should rotate between." },
+          { label: "Write 10 viral reel hooks (ready to use)", prompt: "Write 10 scroll-stopping Instagram reel hook lines for my brand. Each hook should be under 7 words, create curiosity or shock, and match my brand voice. Format: numbered list with a note on WHY each hook works.", category: "Content" },
+          { label: "Full 30-day content calendar", prompt: "Build a complete 30-day Instagram content calendar. For each day include: content type (reel/carousel/story/static), topic, hook, key message, and CTA. Group by content pillars. Make it ready to execute immediately.", category: "Content" },
+          { label: "Write 5 complete carousel scripts", prompt: "Write 5 complete Instagram carousel scripts for my brand. Each carousel should have: slide 1 hook, slides 2-7 value content, slide 8 CTA. Include the exact text for every slide.", category: "Content" },
+          { label: "Ad copy for Meta ads (3 variations)", prompt: "Write 3 complete Meta ad copies for my brand. For each: primary text (under 125 chars), headline (under 40 chars), description, and audience targeting suggestion. Make them conversion-focused.", category: "Content" },
+          { label: "Full influencer outreach strategy + scripts", prompt: "Build a complete influencer outreach strategy for my brand. Include: how to find the right influencers, a DM script, follow-up script, negotiation framework, deliverables checklist, and how to measure ROI. Give me everything I need to run this myself.", category: "Growth" },
+          { label: "Competitor content gap analysis", prompt: "Perform a content gap analysis for my brand vs competitors. Tell me: what content they're NOT making that I can dominate, which content formats are underused in my niche, and give me 10 specific content ideas that would outperform competitor content.", category: "Analysis" },
+          { label: "Instagram growth plan: 0 to 10K strategy", prompt: "Give me a complete Instagram growth strategy to go from my current followers to 10K. Include: content mix, posting frequency, engagement tactics, collaboration strategy, hashtag approach, story strategy, and week-by-week milestones.", category: "Growth" },
+          { label: "Write brand story for About page + bio", prompt: "Write 3 versions of my brand story: (1) 150-word Instagram bio version, (2) 400-word website About page, (3) 60-second verbal pitch version. Make each emotionally compelling and specific.", category: "Content" },
+          { label: "Email marketing sequence (5 emails)", prompt: "Write a complete 5-email welcome sequence for new subscribers/customers. Include: subject line, preview text, full email body, and CTA for each email. Make the sequence build trust and convert to purchase.", category: "Growth" },
+          { label: "WhatsApp broadcast strategy + 5 messages", prompt: "Build a WhatsApp broadcast strategy for my business. Include frequency, content types, and write 5 ready-to-send broadcast messages that drive engagement and sales without feeling spammy.", category: "Growth" },
+          { label: "Hashtag master strategy (60 hashtags)", prompt: "Build a complete hashtag strategy for my Instagram. Give me 60 hashtags organised into: 20 niche (under 100K posts), 20 medium (100K-1M), 20 broad (1M+). Group them into 3 rotatable sets of 20 I can alternate between posts.", category: "Strategy" },
+          { label: "Full campaign brief for product launch", prompt: "Write a complete marketing campaign brief for launching a new product. Include: campaign name, objective, target audience, key message, content plan across all platforms, influencer strategy, ad budget split, timeline, and success metrics.", category: "Strategy" },
         ]}
       />
     </div>
