@@ -35,6 +35,7 @@ export interface RevenueEntry {
   amount: number;
   source: string;
   note: string;
+  externalId?: string;
 }
 
 export interface HabitEntry {

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, TrendingUp, Megaphone, Sparkles, Zap,
   Activity, Lightbulb, Target, Users, Bot, Settings,
-  Brain, GitBranch, Search, Command, ArrowRight,
+  Brain, GitBranch, Link2, Search, Command, ArrowRight,
 } from "lucide-react";
 
 interface Cmd {
@@ -31,8 +31,9 @@ const ALL_COMMANDS: Cmd[] = [
   { id: "nav-networking",   label: "Networking",        group: "Navigate", icon: Users,           href: "/dashboard/networking",   keywords: ["contacts","crm","relationships"] },
   { id: "nav-advisor",      label: "AI Advisor",        group: "Navigate", icon: Bot,             href: "/dashboard/advisor",      keywords: ["chat","ai","coach"] },
   { id: "nav-decision",     label: "Decision Engine",   group: "Navigate", icon: GitBranch,       href: "/dashboard/decision",     keywords: ["decide","what if","simulate"] },
-  { id: "nav-memory",       label: "Founder Memory",    group: "Navigate", icon: Brain,           href: "/dashboard/memory",       keywords: ["context","profile","goals"] },
-  { id: "nav-settings",     label: "Settings",          group: "Navigate", icon: Settings,        href: "/dashboard/settings",     keywords: ["api","key","provider"] },
+  { id: "nav-memory",        label: "Founder Memory",    group: "Navigate", icon: Brain,    href: "/dashboard/memory",       keywords: ["context","profile","goals"] },
+  { id: "nav-integrations", label: "Integrations",      group: "Navigate", icon: Link2,    href: "/dashboard/integrations", keywords: ["shopify","razorpay","meta","connect","sync"] },
+  { id: "nav-settings",     label: "Settings",          group: "Navigate", icon: Settings, href: "/dashboard/settings",     keywords: ["api","key","provider"] },
   { id: "act-revenue",      label: "Log Revenue Entry", group: "Actions",  icon: TrendingUp,      href: "/dashboard/revenue",      keywords: ["add","log","track"] },
   { id: "act-task",         label: "Add New Task",      group: "Actions",  icon: Zap,             href: "/dashboard/execution",    keywords: ["todo","task","create"] },
   { id: "act-advisor",      label: "Ask AI Advisor",    group: "Actions",  icon: Bot,             href: "/dashboard/advisor",      keywords: ["question","help","ask"] },

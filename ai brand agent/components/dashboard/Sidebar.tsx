@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import {
   LayoutDashboard, TrendingUp, Megaphone, Zap, Activity,
   Lightbulb, Target, Users, Bot, Settings, Sparkles,
-  LogOut, Brain, GitBranch,
+  LogOut, Brain, GitBranch, Link2,
 } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import { cn } from "@/lib/utils";
@@ -26,12 +26,13 @@ const NAV_PRIMARY = [
 ];
 
 const NAV_SECONDARY = [
-  { href: "/dashboard/execution",   label: "Execution",    icon: Zap },
-  { href: "/dashboard/performance", label: "Performance",  icon: Activity },
-  { href: "/dashboard/vision",      label: "Vision",       icon: Target },
-  { href: "/dashboard/networking",  label: "Networking",   icon: Users },
-  { href: "/dashboard/advisor",     label: "AI Advisor",   icon: Bot,     badge: "AI" },
-  { href: "/dashboard/memory",      label: "AI Memory",    icon: Brain },
+  { href: "/dashboard/execution",     label: "Execution",     icon: Zap },
+  { href: "/dashboard/performance",   label: "Performance",   icon: Activity },
+  { href: "/dashboard/vision",        label: "Vision",        icon: Target },
+  { href: "/dashboard/networking",    label: "Networking",    icon: Users },
+  { href: "/dashboard/advisor",       label: "AI Advisor",    icon: Bot,    badge: "AI" },
+  { href: "/dashboard/memory",        label: "AI Memory",     icon: Brain },
+  { href: "/dashboard/integrations",  label: "Integrations",  icon: Link2,  badge: "NEW" },
 ];
 
 function NavItem({

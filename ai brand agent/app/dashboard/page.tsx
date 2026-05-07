@@ -16,7 +16,7 @@ import TopBar from "@/components/dashboard/TopBar";
 import { cn } from "@/lib/utils";
 import {
   TrendingUp, Zap, Target, Activity, ChevronRight,
-  GitBranch, Bot, Brain, Flame, ArrowRight,
+  GitBranch, Bot, Brain, Flame, ArrowRight, Link2,
 } from "lucide-react";
 
 const URGENCY_CONFIG = {
@@ -291,6 +291,7 @@ export default function DashboardPage() {
                   { label: "AI Advisor", desc: "Strategic conversation", icon: Bot, href: "/dashboard/advisor" },
                   { label: "Log Revenue", desc: "Track a new entry", icon: TrendingUp, href: "/dashboard/revenue" },
                   { label: "Founder Memory", desc: "Update AI context", icon: Brain, href: "/dashboard/memory" },
+                  { label: "Integrations", desc: "Connect Shopify, Meta & more", icon: Link2, href: "/dashboard/integrations" },
                 ].map((a) => (
                   <Link key={a.href} href={a.href} className="block">
                     <div className={cn(
