@@ -1,4 +1,4 @@
-import { getHabits, getTasks } from "./storage";
+import { getHabits, getTasks, getRevenue, HabitEntry } from "./storage";
 
 export function calcDisciplineScore(date: string): number {
   const habits = getHabits();
@@ -23,19 +23,36 @@ export function calcExecutionScore(date: string): number {
   return Math.round((completed / tasks.length) * 100);
 }
 
+function calcRevenueBonusScore(): number {
+  const revenue = getRevenue();
+  const now = new Date();
+  const thisMonth = now.toISOString().slice(0, 7);
+  const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const lastMonth = prevDate.toISOString().slice(0, 7);
+  const thisTotal = revenue
+    .filter((e) => e.date.startsWith(thisMonth))
+    .reduce((s, e) => s + e.amount, 0);
+  const lastTotal = revenue
+    .filter((e) => e.date.startsWith(lastMonth))
+    .reduce((s, e) => s + e.amount, 0);
+  if (lastTotal === 0 || thisTotal === 0) return 0;
+  const growth = (thisTotal - lastTotal) / lastTotal;
+  if (growth <= 0) return 0;
+  return Math.min(Math.round(growth * 50), 10);
+}
+
 export function calcMomentumScore(date: string): number {
   const d = calcDisciplineScore(date);
   const e = calcExecutionScore(date);
-  return Math.round(d * 0.5 + e * 0.5);
+  const base = Math.round(d * 0.5 + e * 0.5);
+  return Math.min(base + calcRevenueBonusScore(), 100);
 }
 
 export function calcWeeklyConsistency(): number {
   const habits = getHabits();
   const last7 = habits.slice(0, 7);
   if (last7.length === 0) return 0;
-  const scores = last7.map((h) =>
-    calcDisciplineScore(h.date)
-  );
+  const scores = last7.map((h) => calcDisciplineScore(h.date));
   return Math.round(scores.reduce((a, b) => a + b, 0) / last7.length);
 }
 
@@ -43,8 +60,20 @@ export function getStreakCount(): number {
   const habits = getHabits();
   let streak = 0;
   for (const h of habits) {
-    const score = calcDisciplineScore(h.date);
-    if (score >= 40) streak++;
+    if (calcDisciplineScore(h.date) >= 40) streak++;
+    else break;
+  }
+  return streak;
+}
+
+export function calcHabitStreak(
+  habits: HabitEntry[],
+  check: (h: HabitEntry) => boolean
+): number {
+  const sorted = [...habits].sort((a, b) => b.date.localeCompare(a.date));
+  let streak = 0;
+  for (const h of sorted) {
+    if (check(h)) streak++;
     else break;
   }
   return streak;

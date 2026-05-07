@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { getRevenue, getHabits, getTasks, getProfile } from "@/lib/storage";
+import { getRevenue, getHabits, getTasks, getProfile, getDismissedInsights, dismissInsight, clearDismissedInsights } from "@/lib/storage";
 import { generateInsights, Insight } from "@/lib/insights";
 import {
   TrendingUp, AlertTriangle, BarChart2, Brain,
-  ChevronRight, Zap, Shield,
+  ChevronRight, Zap, Shield, X,
 } from "lucide-react";
 
 const TYPE_CONFIG = {
@@ -54,22 +54,31 @@ const URGENCY_LABELS = {
   low:    { label: "FYI",    color: "text-muted" },
 };
 
-function InsightCard({ insight, index }: { insight: Insight; index: number }) {
+function InsightCard({ insight, index, onDismiss }: { insight: Insight; index: number; onDismiss: (id: string) => void }) {
   const cfg = TYPE_CONFIG[insight.type];
-  const Icon = cfg.icon;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -20, height: 0, marginBottom: 0 }}
       transition={{ delay: index * 0.06, duration: 0.3 }}
       className={cn(
-        "glass rounded-xl p-4 hover-lift cursor-default transition-all group",
+        "glass rounded-xl p-4 hover-lift cursor-default transition-all group relative",
         cfg.className
       )}
     >
+      {/* Dismiss button */}
+      <button
+        onClick={() => onDismiss(insight.id)}
+        className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 text-muted hover:text-text-primary transition-all p-1 rounded"
+        title="Dismiss for 24 hours"
+      >
+        <X size={11} />
+      </button>
+
       {/* Header row */}
-      <div className="flex items-center gap-2 mb-2.5">
+      <div className="flex items-center gap-2 mb-2.5 pr-5">
         <span className={cn("text-[9px] font-semibold tracking-widest px-2 py-0.5 rounded-full border", cfg.badge)}>
           {cfg.label}
         </span>
@@ -92,7 +101,6 @@ function InsightCard({ insight, index }: { insight: Insight; index: number }) {
 
       {/* Footer */}
       <div className="flex items-center justify-between">
-        {/* Confidence */}
         <div className="flex items-center gap-2 flex-1 mr-4">
           <span className="text-[10px] text-muted whitespace-nowrap">Confidence</span>
           <div className="confidence-bar flex-1">
@@ -104,7 +112,6 @@ function InsightCard({ insight, index }: { insight: Insight; index: number }) {
           <span className="text-[10px] text-muted whitespace-nowrap">{insight.confidence}%</span>
         </div>
 
-        {/* Action */}
         {insight.action && (
           <Link
             href={insight.action.href}
@@ -136,16 +143,36 @@ function SkeletonCard() {
 export default function InsightsFeed({ maxItems = 6 }: { maxItems?: number }) {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [dismissedCount, setDismissedCount] = useState(0);
 
-  useEffect(() => {
+  const load = () => {
     const revenue  = getRevenue();
     const habits   = getHabits();
     const tasks    = getTasks();
     const profile  = getProfile();
     const generated = generateInsights(revenue, habits, tasks, profile);
-    setInsights(generated.slice(0, maxItems));
+    const dismissed = getDismissedInsights();
+    const visible = generated.filter((ins) => !dismissed.includes(ins.id));
+    const hidden = generated.length - visible.length;
+    setInsights(visible.slice(0, maxItems));
+    setDismissedCount(hidden);
     setLoaded(true);
+  };
+
+  useEffect(() => {
+    load();
   }, [maxItems]);
+
+  const handleDismiss = (id: string) => {
+    dismissInsight(id);
+    setInsights((prev) => prev.filter((ins) => ins.id !== id));
+    setDismissedCount((c) => c + 1);
+  };
+
+  const handleReset = () => {
+    clearDismissedInsights();
+    load();
+  };
 
   return (
     <div className="space-y-3">
@@ -158,7 +185,17 @@ export default function InsightsFeed({ maxItems = 6 }: { maxItems?: number }) {
             <span className="text-[9px] text-accent-bright font-medium ml-1">LIVE</span>
           </span>
         </div>
-        <span className="text-[10px] text-muted">{insights.length} signals detected</span>
+        <div className="flex items-center gap-2">
+          {dismissedCount > 0 && (
+            <button
+              onClick={handleReset}
+              className="text-[10px] text-muted hover:text-accent-bright transition-colors"
+            >
+              {dismissedCount} dismissed · Reset
+            </button>
+          )}
+          <span className="text-[10px] text-muted">{insights.length} signals</span>
+        </div>
       </div>
 
       {!loaded ? (
@@ -168,14 +205,24 @@ export default function InsightsFeed({ maxItems = 6 }: { maxItems?: number }) {
       ) : insights.length === 0 ? (
         <div className="glass rounded-xl p-6 text-center">
           <Shield size={20} className="text-muted mx-auto mb-2" />
-          <p className="text-xs text-muted">Log revenue and habits to generate business intelligence.</p>
+          <p className="text-xs text-muted">
+            {dismissedCount > 0
+              ? `${dismissedCount} insight${dismissedCount > 1 ? "s" : ""} dismissed for today. `
+              : ""}
+            Log revenue and habits to generate business intelligence.
+            {dismissedCount > 0 && (
+              <button onClick={handleReset} className="text-accent-bright hover:underline ml-1">Reset</button>
+            )}
+          </p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {insights.map((insight, i) => (
-            <InsightCard key={insight.id} insight={insight} index={i} />
-          ))}
-        </div>
+        <AnimatePresence>
+          <div className="space-y-3">
+            {insights.map((insight, i) => (
+              <InsightCard key={insight.id} insight={insight} index={i} onDismiss={handleDismiss} />
+            ))}
+          </div>
+        </AnimatePresence>
       )}
     </div>
   );

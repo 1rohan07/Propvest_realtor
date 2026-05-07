@@ -2,14 +2,15 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { getTasks, setTasks, Task } from "@/lib/storage";
-import { today } from "@/lib/utils";
+import { getTasks, setTasks, Task, getGoals } from "@/lib/storage";
+import { today, yesterday, getLast7DatesDesc, dayLabel } from "@/lib/utils";
+import { calcExecutionScore } from "@/lib/scoring";
 import { cn } from "@/lib/utils";
 import TopBar from "@/components/dashboard/TopBar";
 import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
 import { Zap as ZapIcon } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { Plus, Check, Timer, RotateCcw, Play, Pause, Trash2 } from "lucide-react";
+import { Plus, Check, Timer, RotateCcw, Play, Pause, Trash2, ArrowRight, BarChart2 } from "lucide-react";
 
 const CATEGORIES = ["Sales", "Content", "Product", "Networking", "Fitness", "Learning", "Strategy", "Operations"];
 const PRIORITIES: Task["priority"][] = ["high", "medium", "low"];
@@ -20,15 +21,38 @@ const PRIORITY_COLORS = {
   low: "text-muted border-border",
 };
 
+interface GoalOption { id: string; title: string; }
+
 export default function ExecutionPage() {
   const [tasks, setLocalTasks] = useState<Task[]>([]);
-  const [form, setForm] = useState({ text: "", category: "Sales", priority: "medium" as Task["priority"] });
+  const [yesterdayCarryover, setYesterdayCarryover] = useState<Task[]>([]);
+  const [goals, setGoals] = useState<GoalOption[]>([]);
+  const [weeklyData, setWeeklyData] = useState<{ day: string; pct: number }[]>([]);
+  const [form, setForm] = useState({ text: "", category: "Sales", priority: "medium" as Task["priority"], goalId: "" });
   const [showAdd, setShowAdd] = useState(false);
   const [pomodoro, setPomodoro] = useState({ running: false, seconds: 25 * 60, mode: "work" as "work" | "break" });
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     setLocalTasks(getTasks(today()));
+
+    // Yesterday's uncompleted tasks
+    const yTasks = getTasks(yesterday());
+    setYesterdayCarryover(yTasks.filter((t) => !t.completed));
+
+    // Goals for dropdown
+    const gs = (getGoals() as any[]).map((g: any, i: number) => ({ id: g.id ?? String(i), title: g.title }));
+    setGoals(gs);
+
+    // Last 7 days completion data
+    const last7 = getLast7DatesDesc();
+    setWeeklyData(
+      last7.reverse().map((d) => ({
+        day: dayLabel(d),
+        pct: calcExecutionScore(d),
+      }))
+    );
+
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, []);
 
@@ -36,6 +60,12 @@ export default function ExecutionPage() {
     setLocalTasks(updated);
     const all = getTasks();
     setTasks([...all.filter((x) => x.date !== today()), ...updated]);
+  };
+
+  const carryOver = (task: Task) => {
+    const carried: Task = { ...task, id: Date.now().toString(), date: today(), completed: false };
+    sync([...tasks, carried]);
+    setYesterdayCarryover((p) => p.filter((t) => t.id !== task.id));
   };
 
   const addTask = () => {
@@ -47,9 +77,10 @@ export default function ExecutionPage() {
       completed: false,
       date: today(),
       priority: form.priority,
+      ...(form.goalId ? { goalId: form.goalId } : {}),
     };
     sync([...tasks, t]);
-    setForm({ text: "", category: "Sales", priority: "medium" });
+    setForm({ text: "", category: "Sales", priority: "medium", goalId: "" });
     setShowAdd(false);
   };
 
@@ -91,6 +122,7 @@ export default function ExecutionPage() {
   const medium = tasks.filter((t) => t.priority === "medium" && !t.completed);
   const low = tasks.filter((t) => t.priority === "low" && !t.completed);
   const done = tasks.filter((t) => t.completed);
+  const weekAvg = weeklyData.length > 0 ? Math.round(weeklyData.reduce((s, d) => s + d.pct, 0) / weeklyData.length) : 0;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -107,6 +139,51 @@ export default function ExecutionPage() {
           </button>
         </div>
 
+        {/* Weekly completion sparkline */}
+        <div className="glass rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <BarChart2 size={13} className="text-accent-bright" />
+            <h3 className="text-xs font-semibold text-text-primary">This Week</h3>
+            <span className="text-[10px] text-muted ml-auto">{weekAvg}% avg completion</span>
+          </div>
+          <div className="flex items-end gap-1 h-12">
+            {weeklyData.map((d, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                <div className="w-full flex items-end" style={{ height: 36 }}>
+                  <div
+                    className={cn("w-full rounded-sm transition-all", d.day === dayLabel(today()) ? "bg-accent" : "bg-surface-2")}
+                    style={{ height: `${Math.max(d.pct, 4)}%` }}
+                  />
+                </div>
+                <span className={cn("text-[9px]", d.day === dayLabel(today()) ? "text-accent-bright font-semibold" : "text-muted")}>
+                  {d.day}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Yesterday carryover */}
+        {yesterdayCarryover.length > 0 && (
+          <div className="glass rounded-xl p-4 border border-yellow-400/20">
+            <p className="text-xs font-medium text-yellow-400 mb-2 uppercase tracking-wider">Carried Over from Yesterday ({yesterdayCarryover.length})</p>
+            <div className="space-y-2">
+              {yesterdayCarryover.map((t) => (
+                <div key={t.id} className="flex items-center gap-3">
+                  <span className="text-sm text-text-secondary flex-1">{t.text}</span>
+                  <span className="text-[10px] text-muted border border-border rounded px-1.5 py-0.5">{t.category}</span>
+                  <button
+                    onClick={() => carryOver(t)}
+                    className="flex items-center gap-1 text-[10px] text-accent-bright border border-accent/30 bg-accent-dim px-2 py-1 rounded hover:bg-accent/20 transition-colors"
+                  >
+                    <ArrowRight size={9} /> Add today
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {showAdd && (
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="glass rounded-xl p-5 space-y-4">
             <input
@@ -116,12 +193,20 @@ export default function ExecutionPage() {
               placeholder="Task description..."
               autoFocus
             />
-            <div className="flex gap-3">
-              <div className="flex-1">
+            <div className="flex gap-3 flex-wrap">
+              <div className="flex-1 min-w-[120px]">
                 <select value={form.category} onChange={(e) => setForm((p) => ({ ...p, category: e.target.value }))}>
                   {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
+              {goals.length > 0 && (
+                <div className="flex-1 min-w-[150px]">
+                  <select value={form.goalId} onChange={(e) => setForm((p) => ({ ...p, goalId: e.target.value }))}>
+                    <option value="">No linked goal</option>
+                    {goals.map((g) => <option key={g.id} value={g.id}>{g.title}</option>)}
+                  </select>
+                </div>
+              )}
               <div className="flex gap-1">
                 {PRIORITIES.map((pr) => (
                   <button
@@ -152,26 +237,34 @@ export default function ExecutionPage() {
               <div key={label} className="glass rounded-xl p-4">
                 <p className={cn("text-xs font-medium mb-3 uppercase tracking-wider", color)}>{label}</p>
                 <div className="space-y-2">
-                  {list.map((t) => (
-                    <div key={t.id} className="flex items-center gap-3 group">
-                      <button
-                        onClick={() => toggle(t.id)}
-                        className={cn(
-                          "w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-colors",
-                          t.completed ? "bg-accent border-accent" : "border-border group-hover:border-accent"
+                  {list.map((t) => {
+                    const linkedGoal = t.goalId ? goals.find((g) => g.id === t.goalId) : null;
+                    return (
+                      <div key={t.id} className="flex items-center gap-3 group">
+                        <button
+                          onClick={() => toggle(t.id)}
+                          className={cn(
+                            "w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-colors",
+                            t.completed ? "bg-accent border-accent" : "border-border group-hover:border-accent"
+                          )}
+                        >
+                          {t.completed && <Check size={9} className="text-white" />}
+                        </button>
+                        <span className={cn("text-sm flex-1", t.completed ? "line-through text-muted" : "text-text-secondary")}>
+                          {t.text}
+                        </span>
+                        {linkedGoal && (
+                          <span className="text-[9px] text-accent-bright border border-accent/30 bg-accent-dim px-1.5 py-0.5 rounded hidden group-hover:inline-flex">
+                            → {linkedGoal.title.slice(0, 20)}{linkedGoal.title.length > 20 ? "…" : ""}
+                          </span>
                         )}
-                      >
-                        {t.completed && <Check size={9} className="text-white" />}
-                      </button>
-                      <span className={cn("text-sm flex-1", t.completed ? "line-through text-muted" : "text-text-secondary")}>
-                        {t.text}
-                      </span>
-                      <span className="text-[10px] text-muted border border-border rounded px-1.5 py-0.5">{t.category}</span>
-                      <button onClick={() => remove(t.id)} className="opacity-0 group-hover:opacity-100 text-muted hover:text-red-400 transition-all">
-                        <Trash2 size={12} />
-                      </button>
-                    </div>
-                  ))}
+                        <span className="text-[10px] text-muted border border-border rounded px-1.5 py-0.5">{t.category}</span>
+                        <button onClick={() => remove(t.id)} className="opacity-0 group-hover:opacity-100 text-muted hover:text-red-400 transition-all">
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))}
@@ -239,6 +332,8 @@ export default function ExecutionPage() {
 Current task list for today: ${tasks.length} tasks total, ${completed}/${tasks.length} completed.
 High priority incomplete: ${high.map((t) => t.text).join(", ") || "none"}.
 Medium priority incomplete: ${medium.map((t) => t.text).join(", ") || "none"}.
+Carryover from yesterday: ${yesterdayCarryover.length} tasks not completed.
+Weekly avg completion: ${weekAvg}%.
 RULES: Be specific and ruthless. Never give generic productivity advice. Give concrete frameworks, exact task sequences, and decision protocols the founder can implement today. Always structure your response clearly with headers and action steps.`}
         quickActions={[
           { label: "Prioritise my tasks: 80/20 impact filter", prompt: "Apply the 80/20 rule to my current task list. Tell me: which 2-3 tasks will drive 80% of today's results, which tasks I should eliminate or defer, and the exact sequence I should execute in. Give me a ranked list with a one-line reason for each.", category: "Planning" },

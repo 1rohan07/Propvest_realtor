@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getProfile } from "@/lib/storage";
-import { getAISettings, hasAIConfigured, PROVIDER_MODELS } from "@/lib/ai";
+import { getProfile, getAdvisorHistory, setAdvisorHistory, clearAdvisorHistory, AdvisorMessage } from "@/lib/storage";
+import { getAISettings, hasAIConfigured } from "@/lib/ai";
 import { FounderProfile } from "@/lib/storage";
 import TopBar from "@/components/dashboard/TopBar";
-import { Bot, Send, Settings, TrendingUp, Target, Megaphone, Lightbulb } from "lucide-react";
+import { Bot, Send, Settings, TrendingUp, Target, Megaphone, Lightbulb, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -14,34 +14,10 @@ type Mode = "strategic" | "coach" | "brand" | "analyst";
 type Message = { role: "user" | "assistant"; content: string };
 
 const MODES: { key: Mode; label: string; icon: React.ReactNode; description: string; color: string }[] = [
-  {
-    key: "strategic",
-    label: "Strategic Advisor",
-    icon: <TrendingUp size={15} />,
-    description: "Revenue strategy, growth levers, market positioning",
-    color: "border-accent/40 bg-accent-dim text-accent-bright",
-  },
-  {
-    key: "coach",
-    label: "Discipline Coach",
-    icon: <Target size={15} />,
-    description: "Accountability, execution habits, time management",
-    color: "border-blue-500/30 bg-blue-500/10 text-blue-400",
-  },
-  {
-    key: "brand",
-    label: "Brand Manager",
-    icon: <Megaphone size={15} />,
-    description: "Content strategy, social growth, brand voice",
-    color: "border-purple-500/30 bg-purple-500/10 text-purple-400",
-  },
-  {
-    key: "analyst",
-    label: "Opportunity Analyst",
-    icon: <Lightbulb size={15} />,
-    description: "Trend spotting, competitor intelligence, white-space",
-    color: "border-orange-500/30 bg-orange-500/10 text-orange-400",
-  },
+  { key: "strategic", label: "Strategic Advisor", icon: <TrendingUp size={15} />, description: "Revenue strategy, growth levers, market positioning", color: "border-accent/40 bg-accent-dim text-accent-bright" },
+  { key: "coach", label: "Discipline Coach", icon: <Target size={15} />, description: "Accountability, execution habits, time management", color: "border-blue-500/30 bg-blue-500/10 text-blue-400" },
+  { key: "brand", label: "Brand Manager", icon: <Megaphone size={15} />, description: "Content strategy, social growth, brand voice", color: "border-purple-500/30 bg-purple-500/10 text-purple-400" },
+  { key: "analyst", label: "Opportunity Analyst", icon: <Lightbulb size={15} />, description: "Trend spotting, competitor intelligence, white-space", color: "border-orange-500/30 bg-orange-500/10 text-orange-400" },
 ];
 
 const QUICK_PROMPTS: Record<Mode, string[]> = {
@@ -78,14 +54,10 @@ Peak productivity window: ${profile.peakProductivityWindow}
     : "You are an elite founder advisor. The founder has not completed their profile yet.";
 
   const modeInstructions: Record<Mode, string> = {
-    strategic:
-      "Act as a world-class business strategist. Be direct, data-driven, and focus on leverage points and revenue growth. Give actionable 30/90-day frameworks.",
-    coach:
-      "Act as a high-performance discipline coach. Be direct, honest, and accountability-focused. Don't coddle. Push the founder to execute.",
-    brand:
-      "Act as a premium brand strategist and content director. Focus on positioning, storytelling, platform growth, and brand differentiation.",
-    analyst:
-      "Act as a market intelligence analyst. Identify trends, white spaces, competitor weaknesses, and emerging opportunities the founder can capitalise on.",
+    strategic: "Act as a world-class business strategist. Be direct, data-driven, and focus on leverage points and revenue growth. Give actionable 30/90-day frameworks.",
+    coach: "Act as a high-performance discipline coach. Be direct, honest, and accountability-focused. Don't coddle. Push the founder to execute.",
+    brand: "Act as a premium brand strategist and content director. Focus on positioning, storytelling, platform growth, and brand differentiation.",
+    analyst: "Act as a market intelligence analyst. Identify trends, white spaces, competitor weaknesses, and emerging opportunities the founder can capitalise on.",
   };
 
   return `${base}\nYour role: ${modeInstructions[mode]}\n\nBe concise, sharp, and specific. Avoid generic advice. Reference the founder's actual context.`;
@@ -119,11 +91,22 @@ export default function AdvisorPage() {
   useEffect(() => {
     setProfile(getProfile());
     setConfigured(hasAIConfigured());
+    // Restore chat history
+    const history = getAdvisorHistory();
+    if (history.length > 0) {
+      setMode((history[history.length - 1].mode as Mode) ?? "strategic");
+      setMessages(history.map(({ role, content }) => ({ role, content })));
+    }
   }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  const persistHistory = (msgs: Message[], currentMode: Mode) => {
+    const withMode: AdvisorMessage[] = msgs.map((m) => ({ ...m, mode: currentMode }));
+    setAdvisorHistory(withMode);
+  };
 
   const send = async (text?: string) => {
     const msg = (text ?? input).trim();
@@ -157,6 +140,7 @@ export default function AdvisorPage() {
       const reader = res.body?.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
+      let finalContent = "";
 
       while (reader) {
         const { done, value } = await reader.read();
@@ -165,16 +149,20 @@ export default function AdvisorPage() {
         const text = buildClaudeTextFromSSE(buffer);
         if (text) {
           buffer = "";
+          finalContent += text;
           setMessages((prev) => {
             const updated = [...prev];
-            updated[updated.length - 1] = {
-              role: "assistant",
-              content: updated[updated.length - 1].content + text,
-            };
+            updated[updated.length - 1] = { role: "assistant", content: updated[updated.length - 1].content + text };
             return updated;
           });
         }
       }
+
+      // Persist after response complete
+      setMessages((prev) => {
+        persistHistory(prev, mode);
+        return prev;
+      });
     } catch {
       setMessages((prev) => {
         const updated = [...prev];
@@ -186,6 +174,16 @@ export default function AdvisorPage() {
     }
   };
 
+  const handleClearHistory = () => {
+    clearAdvisorHistory();
+    setMessages([]);
+  };
+
+  const handleModeChange = (m: Mode) => {
+    setMode(m);
+    // Don't clear messages on mode switch — user can continue cross-mode
+  };
+
   const activeMode = MODES.find((m) => m.key === mode)!;
 
   return (
@@ -193,12 +191,12 @@ export default function AdvisorPage() {
       <TopBar title="AI Advisor" />
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-56 border-r border-border p-3 space-y-2 overflow-y-auto">
+        <div className="w-56 border-r border-border p-3 space-y-2 overflow-y-auto flex flex-col">
           <p className="text-[10px] text-muted uppercase tracking-wider px-2 mb-3">Advisor Mode</p>
           {MODES.map((m) => (
             <button
               key={m.key}
-              onClick={() => { setMode(m.key); setMessages([]); }}
+              onClick={() => handleModeChange(m.key)}
               className={cn(
                 "w-full text-left px-3 py-2.5 rounded-lg border text-xs transition-colors",
                 mode === m.key ? m.color : "border-transparent text-muted hover:text-text-primary hover:bg-surface-2"
@@ -212,14 +210,26 @@ export default function AdvisorPage() {
             </button>
           ))}
 
-          {!configured && (
-            <Link href="/dashboard/settings" className="block mt-4">
-              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-yellow-400/30 bg-yellow-400/10 text-yellow-400 text-xs">
-                <Settings size={12} />
-                <span>Configure AI Key</span>
-              </div>
-            </Link>
-          )}
+          <div className="mt-auto pt-4 border-t border-border space-y-1">
+            {messages.length > 0 && (
+              <button
+                onClick={handleClearHistory}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted hover:text-red-400 hover:bg-surface-2 transition-colors"
+              >
+                <Trash2 size={11} />
+                <span>Clear History</span>
+                <span className="ml-auto text-[9px]">{messages.length} msgs</span>
+              </button>
+            )}
+            {!configured && (
+              <Link href="/dashboard/settings" className="block">
+                <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-yellow-400/30 bg-yellow-400/10 text-yellow-400 text-xs">
+                  <Settings size={12} />
+                  <span>Configure AI Key</span>
+                </div>
+              </Link>
+            )}
+          </div>
         </div>
 
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -257,16 +267,14 @@ export default function AdvisorPage() {
                     <div
                       className={cn(
                         "max-w-2xl rounded-xl px-4 py-3 text-sm leading-relaxed",
-                        m.role === "user"
-                          ? "bg-accent text-white"
-                          : "glass text-text-secondary"
+                        m.role === "user" ? "bg-accent text-white" : "glass text-text-secondary"
                       )}
                     >
                       {m.content || (loading && i === messages.length - 1 ? (
                         <span className="flex gap-1">
-                          <span className="w-1.5 h-1.5 bg-muted rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                          <span className="w-1.5 h-1.5 bg-muted rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                          <span className="w-1.5 h-1.5 bg-muted rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                          {[0, 150, 300].map((d) => (
+                            <span key={d} className="w-1.5 h-1.5 bg-muted rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />
+                          ))}
                         </span>
                       ) : "")}
                     </div>

@@ -53,3 +53,31 @@ export function greet(): string {
   if (hour < 17) return "Good afternoon";
   return "Good evening";
 }
+
+export function getLast90Days(): string[] {
+  return Array.from({ length: 90 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    return d.toISOString().split("T")[0];
+  });
+}
+
+export function yesterday(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().split("T")[0];
+}
+
+export function dateNDaysAgo(n: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString().split("T")[0];
+}
+
+export function getLast7DatesDesc(): string[] {
+  return getLast7Days();
+}
+
+export function shortDate(dateStr: string): string {
+  return new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" }).format(new Date(dateStr));
+}

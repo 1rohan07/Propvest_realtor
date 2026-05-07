@@ -7,7 +7,7 @@ import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
 import { Lightbulb as LightIcon } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { cn } from "@/lib/utils";
-import { Lightbulb, Plus, Trash2 } from "lucide-react";
+import { Lightbulb, Plus, Trash2, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { today } from "@/lib/utils";
 
@@ -20,23 +20,81 @@ const PRIORITY_COLORS = {
   low: "text-muted border-border",
 };
 
-const TREND_INSIGHTS = [
-  { title: "D2C India Boom", body: "India's D2C market is projected to reach $100B by 2025. Tier-2/3 cities are the next growth frontier.", tag: "D2C" },
-  { title: "Creator Economy Maturing", body: "Creators with 10K–100K followers (micro-influencers) outperform celebrities in conversion. Niche is king.", tag: "Creator Economy" },
-  { title: "AI Tool Adoption Surge", body: "SMBs are rapidly adopting AI tools for ops, content, and customer service. First-mover advantage is real.", tag: "AI Tools" },
-  { title: "Premium Athleisure Gap", body: "The mid-premium segment (₹2K–5K range) is underserved by both mass-market and luxury brands in India.", tag: "Athleisure" },
+interface TrendInsight { title: string; body: string; tag: string; relevance: "high" | "medium"; }
+
+const ALL_INSIGHTS: TrendInsight[] = [
+  { title: "D2C India Boom", body: "India's D2C market is projected to reach $100B by 2025. Tier-2/3 cities are the next growth frontier — logistics and local language content are key unlocks.", tag: "D2C", relevance: "high" },
+  { title: "Creator Economy Maturing", body: "Creators with 10K–100K followers (micro-influencers) outperform celebrities in conversion by 6x. Niche credibility beats reach.", tag: "Creator Economy", relevance: "high" },
+  { title: "AI Tool Adoption Surge", body: "SMBs are rapidly adopting AI tools for ops, content, and customer service. The window for first-mover advantage in AI-native products is 12–18 months.", tag: "AI Tools", relevance: "high" },
+  { title: "Premium Athleisure Gap", body: "The mid-premium segment (₹2K–5K) is underserved by both mass-market and luxury brands in India. Domestic founders with community flywheels win.", tag: "Athleisure", relevance: "medium" },
+  { title: "Revenue-Based Financing Rising", body: "RBF is gaining traction as an equity-free capital source for D2C brands. Platforms like Velocity, GetVantage, and Klub are active in the ₹25L–₹2Cr range.", tag: "Finance", relevance: "medium" },
+  { title: "Quick Commerce for Non-Food", body: "Quick commerce (10-30 min delivery) is expanding beyond groceries into beauty, wellness, and lifestyle. Early placement with Blinkit/Swiggy Instamart = brand discovery at scale.", tag: "D2C", relevance: "high" },
+  { title: "UGC Outperforming Polished Ads", body: "User-generated content (real customers, unboxings, reviews) is outperforming studio-shot ads by 4x in click-through on Meta. Authenticity is the new premium.", tag: "Content", relevance: "high" },
+  { title: "B2B SaaS in Bharat", body: "Tier-2 Indian businesses are now actively adopting SaaS tools. Vernacular UX + WhatsApp-first onboarding are the keys to this underserved segment.", tag: "SaaS", relevance: "high" },
+  { title: "Subscription Model Momentum", body: "Founders adding a subscription/membership layer see 2.3x higher LTV. Recurring revenue is the single biggest lever for valuation in early-stage consumer brands.", tag: "Revenue", relevance: "high" },
+  { title: "LinkedIn for B2B Founders", body: "LinkedIn organic reach is at a multi-year high for India. Founder-led content (personal stories, lessons, behind-the-scenes) gets 8-12x more reach than company pages.", tag: "Personal Brand", relevance: "medium" },
+  { title: "WhatsApp Commerce Acceleration", body: "WhatsApp Business API is enabling direct D2C sales with conversion rates 40% higher than email. Brands building WhatsApp communities are creating defensible moats.", tag: "D2C", relevance: "high" },
+  { title: "Storytelling Premium", body: "Brands with a clear founder story and mission convert 2.5x better on Instagram than product-focused brands. Story-first content strategy is now a performance lever.", tag: "Personal Brand", relevance: "medium" },
+  { title: "Micro-SaaS Opportunity Window", body: "The 'build in public' + micro-SaaS model is producing $1K–$10K MRR outcomes in 90-180 days for solo founders. Niche tools for specific industries are the sweet spot.", tag: "SaaS", relevance: "medium" },
+  { title: "Community as Distribution", body: "Brands building owned communities (Telegram, Discord, WhatsApp groups) before product launch are seeing 4-6x lower CAC at launch. Community is becoming the primary moat.", tag: "Growth", relevance: "high" },
 ];
+
+function generateInsights(profile: FounderProfile | null): TrendInsight[] {
+  if (!profile) return ALL_INSIGHTS.slice(0, 4);
+
+  const biz = (profile.businessType ?? "").toLowerCase();
+  const stage = (profile.stage ?? "").toLowerCase();
+  const bottleneck = (profile.mainBottleneck ?? "").toLowerCase();
+
+  const scored = ALL_INSIGHTS.map((ins) => {
+    let score = ins.relevance === "high" ? 2 : 1;
+    const tag = ins.tag.toLowerCase();
+
+    if (biz.includes("d2c") && tag.includes("d2c")) score += 3;
+    if (biz.includes("saas") && tag.includes("saas")) score += 3;
+    if (biz.includes("creator") && tag.includes("creator")) score += 3;
+    if (biz.includes("athleisure") && tag.includes("athleisure")) score += 3;
+    if (biz.includes("brand") && (tag.includes("personal brand") || tag.includes("content"))) score += 2;
+
+    if (stage.includes("early") && (tag.includes("growth") || tag.includes("d2c"))) score += 1;
+    if (stage.includes("scal") && (tag.includes("revenue") || tag.includes("finance"))) score += 2;
+
+    if (bottleneck.includes("revenue") && tag.includes("revenue")) score += 2;
+    if (bottleneck.includes("content") && tag.includes("content")) score += 2;
+    if (bottleneck.includes("brand") && tag.includes("personal brand")) score += 2;
+    if (bottleneck.includes("product") && tag.includes("saas")) score += 1;
+
+    return { ins, score };
+  });
+
+  return scored
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+    .map((s) => s.ins);
+}
 
 export default function IntelligencePage() {
   const [opportunities, setLocalOpps] = useState<Opportunity[]>([]);
   const [profile, setProfile] = useState<FounderProfile | null>(null);
+  const [insights, setInsights] = useState<TrendInsight[]>([]);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ title: "", category: "D2C", description: "", priority: "medium" as Opportunity["priority"] });
 
   useEffect(() => {
     setLocalOpps(getOpportunities());
-    setProfile(getProfile());
+    const p = getProfile();
+    setProfile(p);
+    setInsights(generateInsights(p));
   }, []);
+
+  const refresh = () => {
+    // Rotate insights: shuffle and pick next 5
+    const p = getProfile();
+    const scored = ALL_INSIGHTS.map((ins) => ({ ins, r: Math.random() + (ins.relevance === "high" ? 0.3 : 0) }));
+    setInsights(scored.sort((a, b) => b.r - a.r).slice(0, 5).map((s) => s.ins));
+    setRefreshKey((k) => k + 1);
+  };
 
   const add = () => {
     if (!form.title) return;
@@ -125,17 +183,34 @@ export default function IntelligencePage() {
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-text-primary">Market Intelligence Feed</h3>
-            {TREND_INSIGHTS.map((t) => (
-              <div key={t.title} className="glass rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Lightbulb size={12} className="text-accent-bright" />
-                  <p className="text-sm font-medium text-text-primary">{t.title}</p>
-                  <span className="ml-auto text-[10px] text-muted border border-border rounded px-1.5">{t.tag}</span>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-text-primary">
+                Market Intelligence Feed
+                {profile?.businessType && (
+                  <span className="ml-2 text-[10px] text-accent-bright border border-accent/30 bg-accent-dim px-1.5 py-0.5 rounded font-normal">
+                    Tailored for {profile.businessType}
+                  </span>
+                )}
+              </h3>
+              <button
+                onClick={refresh}
+                className="flex items-center gap-1 text-[10px] text-muted hover:text-text-primary border border-border px-2 py-1 rounded-lg transition-colors"
+              >
+                <RefreshCw size={9} /> Refresh
+              </button>
+            </div>
+            <motion.div key={refreshKey} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+              {insights.map((t) => (
+                <div key={t.title} className="glass rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Lightbulb size={12} className={cn(t.relevance === "high" ? "text-accent-bright" : "text-yellow-400")} />
+                    <p className="text-sm font-medium text-text-primary">{t.title}</p>
+                    <span className="ml-auto text-[10px] text-muted border border-border rounded px-1.5">{t.tag}</span>
+                  </div>
+                  <p className="text-xs text-text-secondary leading-relaxed">{t.body}</p>
                 </div>
-                <p className="text-xs text-text-secondary leading-relaxed">{t.body}</p>
-              </div>
-            ))}
+              ))}
+            </motion.div>
           </div>
         </div>
       </div>

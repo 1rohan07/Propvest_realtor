@@ -6,11 +6,12 @@ import {
   getAISettings, setAISettings, clearAISettings,
   AIProvider, AISettings, PROVIDER_MODELS, getDefaultModel
 } from "@/lib/ai";
-import { getProfile } from "@/lib/storage";
+import { getProfile, getRevenue, getHabits, getTasks, getContacts, getGoals } from "@/lib/storage";
 import TopBar from "@/components/dashboard/TopBar";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { cn } from "@/lib/utils";
-import { Key, Check, ExternalLink, Trash2, Eye, EyeOff } from "lucide-react";
+import { Key, Check, ExternalLink, Trash2, Eye, EyeOff, Download, Upload, Database } from "lucide-react";
+import { useRef } from "react";
 
 const PROVIDER_DOCS: Record<AIProvider, { label: string; url: string; hint: string }> = {
   claude: {
@@ -35,6 +36,18 @@ const PROVIDER_DOCS: Record<AIProvider, { label: string; url: string; hint: stri
   },
 };
 
+function downloadBlob(content: string, filename: string, mime: string) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export default function SettingsPage() {
   const [provider, setProvider] = useState<AIProvider>("claude");
   const [model, setModel] = useState<string>("");
@@ -42,6 +55,8 @@ export default function SettingsPage() {
   const [showKey, setShowKey] = useState(false);
   const [saved, setSaved] = useState(false);
   const [profile, setProfile] = useState<{ name: string; founderType: string } | null>(null);
+  const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle");
+  const importRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const existing = getAISettings();
@@ -75,6 +90,60 @@ export default function SettingsPage() {
   };
 
   const doc = PROVIDER_DOCS[provider];
+
+  const exportAllData = () => {
+    const data: Record<string, any> = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key) continue;
+      try {
+        data[key] = JSON.parse(localStorage.getItem(key) ?? "null");
+      } catch {
+        data[key] = localStorage.getItem(key);
+      }
+    }
+    const date = new Date().toISOString().slice(0, 10);
+    downloadBlob(JSON.stringify(data, null, 2), `founder-os-export-${date}.json`, "application/json");
+  };
+
+  const exportRevenueCSV = () => {
+    const revenue = getRevenue();
+    if (revenue.length === 0) return;
+    const header = "date,amount,source,note";
+    const rows = revenue.map((e) => `${e.date},${e.amount},"${e.source}","${(e.note ?? "").replace(/"/g, '""')}"`);
+    const date = new Date().toISOString().slice(0, 10);
+    downloadBlob([header, ...rows].join("\n"), `revenue-${date}.csv`, "text/csv");
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        if (typeof data !== "object" || data === null) throw new Error("Invalid format");
+        for (const [key, value] of Object.entries(data)) {
+          localStorage.setItem(key, typeof value === "string" ? value : JSON.stringify(value));
+        }
+        setImportStatus("success");
+        setTimeout(() => setImportStatus("idle"), 3000);
+      } catch {
+        setImportStatus("error");
+        setTimeout(() => setImportStatus("idle"), 3000);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
+
+  const dataSummary = {
+    revenue: getRevenue().length,
+    habits: getHabits().length,
+    tasks: getTasks().length,
+    contacts: getContacts().length,
+    goals: getGoals().length,
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -195,6 +264,79 @@ export default function SettingsPage() {
             </div>
           </div>
         )}
+
+        {/* Data Export / Import */}
+        <div className="glass rounded-xl p-6 space-y-5">
+          <div className="flex items-center gap-2">
+            <Database size={15} className="text-accent-bright" />
+            <h3 className="text-sm font-semibold text-text-primary">Data Management</h3>
+          </div>
+
+          {/* Data summary */}
+          <div className="grid grid-cols-5 gap-3">
+            {[
+              { label: "Revenue entries", value: dataSummary.revenue },
+              { label: "Habit days", value: dataSummary.habits },
+              { label: "Tasks", value: dataSummary.tasks },
+              { label: "Contacts", value: dataSummary.contacts },
+              { label: "Goals", value: dataSummary.goals },
+            ].map(({ label, value }) => (
+              <div key={label} className="bg-surface-2 rounded-xl p-3 text-center">
+                <p className="text-lg font-bold text-text-primary">{value}</p>
+                <p className="text-[10px] text-muted leading-tight">{label}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex gap-3">
+              <button
+                onClick={exportAllData}
+                className="flex items-center gap-2 flex-1 justify-center py-2.5 rounded-xl border border-border text-sm text-text-secondary hover:text-text-primary hover:border-accent/40 transition-colors"
+              >
+                <Download size={14} /> Export All Data (JSON)
+              </button>
+              <button
+                onClick={exportRevenueCSV}
+                disabled={dataSummary.revenue === 0}
+                className={cn(
+                  "flex items-center gap-2 flex-1 justify-center py-2.5 rounded-xl border text-sm transition-colors",
+                  dataSummary.revenue > 0
+                    ? "border-border text-text-secondary hover:text-text-primary hover:border-accent/40"
+                    : "border-border text-muted cursor-not-allowed"
+                )}
+              >
+                <Download size={14} /> Export Revenue CSV
+              </button>
+            </div>
+
+            <div>
+              <input
+                ref={importRef}
+                type="file"
+                accept=".json"
+                onChange={handleImport}
+                className="hidden"
+              />
+              <button
+                onClick={() => importRef.current?.click()}
+                className="flex items-center gap-2 w-full justify-center py-2.5 rounded-xl border border-border text-sm text-text-secondary hover:text-text-primary hover:border-yellow-400/40 transition-colors"
+              >
+                <Upload size={14} /> Import Data (JSON) — overwrites existing
+              </button>
+              {importStatus === "success" && (
+                <p className="text-xs text-accent-bright text-center mt-1.5">Data imported successfully. Refresh to see changes.</p>
+              )}
+              {importStatus === "error" && (
+                <p className="text-xs text-red-400 text-center mt-1.5">Import failed — invalid JSON file.</p>
+              )}
+            </div>
+          </div>
+
+          <p className="text-[11px] text-muted">
+            All data is stored locally in your browser. Export regularly to back up your data.
+          </p>
+        </div>
       </div>
     </div>
   );

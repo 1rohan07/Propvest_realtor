@@ -1,5 +1,6 @@
 import Sidebar from "@/components/dashboard/Sidebar";
 import CommandPalette from "@/components/dashboard/CommandPalette";
+import QuickLog from "@/components/dashboard/QuickLog";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {children}
       </main>
       <CommandPalette />
+      <QuickLog />
     </div>
   );
 }

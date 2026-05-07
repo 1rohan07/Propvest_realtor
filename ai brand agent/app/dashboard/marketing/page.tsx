@@ -7,7 +7,7 @@ import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
 import { Megaphone } from "lucide-react";
 import KPICard from "@/components/ui/KPICard";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { getProfile, getMarketingData, setMarketingData } from "@/lib/storage";
+import { getProfile, getMarketingData, setMarketingData, getMarketingSnapshots, addMarketingSnapshot, MarketingSnapshot } from "@/lib/storage";
 import { FounderProfile } from "@/lib/storage";
 import {
   Instagram, Linkedin, Twitter, Youtube,
@@ -63,7 +63,10 @@ export default function MarketingPage() {
   const [platforms, setPlatforms] = useState<PlatformStat[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [collabs, setCollabs] = useState<ColabContact[]>([]);
-  const [activeTab, setActiveTab] = useState<"overview" | "campaigns" | "collabs" | "calendar">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "campaigns" | "collabs" | "calendar" | "snapshots">("overview");
+  const [snapshots, setSnapshots] = useState<MarketingSnapshot[]>([]);
+  const [snapshotForm, setSnapshotForm] = useState({ platform: "Instagram", followers: "", engagement: "" });
+  const [snapshotSaved, setSnapshotSaved] = useState(false);
   const [editingPlatform, setEditingPlatform] = useState<string | null>(null);
   const [newCollab, setNewCollab] = useState({ name: "", platform: "Instagram", followers: "", note: "" });
   const [showAddCollab, setShowAddCollab] = useState(false);
@@ -85,6 +88,7 @@ export default function MarketingPage() {
     }
     if (data.campaigns) setCampaigns(data.campaigns as Campaign[]);
     if (data.collabs) setCollabs(data.collabs as ColabContact[]);
+    setSnapshots(getMarketingSnapshots());
   }, []);
 
   const savePlatforms = (updated: PlatformStat[]) => {
@@ -132,11 +136,28 @@ export default function MarketingPage() {
     setMarketingData({ ...data, collabs: updated });
   };
 
+  const logSnapshot = () => {
+    if (!snapshotForm.followers) return;
+    const snap: MarketingSnapshot = {
+      id: Date.now().toString(),
+      date: new Date().toISOString().slice(0, 10),
+      platform: snapshotForm.platform,
+      followers: parseInt(snapshotForm.followers.replace(/,/g, "")) || 0,
+      engagement: parseFloat(snapshotForm.engagement) || 0,
+    };
+    addMarketingSnapshot(snap);
+    setSnapshots(getMarketingSnapshots());
+    setSnapshotForm({ platform: snapshotForm.platform, followers: "", engagement: "" });
+    setSnapshotSaved(true);
+    setTimeout(() => setSnapshotSaved(false), 1500);
+  };
+
   const TABS = [
     { key: "overview", label: "Platform Overview" },
     { key: "campaigns", label: "Campaigns" },
     { key: "collabs", label: "Influencer CRM" },
     { key: "calendar", label: "Content Calendar" },
+    { key: "snapshots", label: "Daily Snapshots" },
   ] as const;
 
   return (
@@ -365,6 +386,110 @@ export default function MarketingPage() {
                 <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-surface-2" /><span className="text-muted text-[10px]">Low</span></div>
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === "snapshots" && (
+          <div className="space-y-4">
+            <div className="glass rounded-xl p-5">
+              <h3 className="text-sm font-semibold text-text-primary mb-4">Log Today's Numbers</h3>
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div>
+                  <label className="block text-xs text-muted mb-1">Platform</label>
+                  <select value={snapshotForm.platform} onChange={(e) => setSnapshotForm((p) => ({ ...p, platform: e.target.value }))}>
+                    {["Instagram", "LinkedIn", "X / Twitter", "YouTube", "Other"].map((pl) => (
+                      <option key={pl} value={pl}>{pl}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-muted mb-1">Followers</label>
+                  <input
+                    type="number"
+                    value={snapshotForm.followers}
+                    onChange={(e) => setSnapshotForm((p) => ({ ...p, followers: e.target.value }))}
+                    placeholder="12400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-muted mb-1">Engagement %</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={snapshotForm.engagement}
+                    onChange={(e) => setSnapshotForm((p) => ({ ...p, engagement: e.target.value }))}
+                    placeholder="3.2"
+                  />
+                </div>
+              </div>
+              <button
+                onClick={logSnapshot}
+                disabled={!snapshotForm.followers}
+                className={cn(
+                  "text-sm px-5 py-2 rounded-lg transition-colors",
+                  snapshotSaved
+                    ? "bg-accent-dim text-accent-bright border border-accent"
+                    : snapshotForm.followers
+                    ? "bg-accent text-white hover:bg-accent-bright"
+                    : "bg-surface-2 text-muted cursor-not-allowed"
+                )}
+              >
+                {snapshotSaved ? "Saved ✓" : "Log Snapshot"}
+              </button>
+            </div>
+
+            {/* Snapshots by platform */}
+            {(() => {
+              const platforms = [...new Set(snapshots.map((s) => s.platform))];
+              if (platforms.length === 0) {
+                return <p className="text-xs text-muted text-center py-6">No snapshots logged yet. Log daily numbers to see growth trends.</p>;
+              }
+              return (
+                <div className="grid grid-cols-2 gap-4">
+                  {platforms.map((pl) => {
+                    const plSnaps = snapshots
+                      .filter((s) => s.platform === pl)
+                      .sort((a, b) => a.date.localeCompare(b.date))
+                      .slice(-14);
+                    const latest = plSnaps[plSnaps.length - 1];
+                    const prev = plSnaps[plSnaps.length - 2];
+                    const followerGrowth = latest && prev ? latest.followers - prev.followers : 0;
+                    const maxF = Math.max(...plSnaps.map((s) => s.followers), 1);
+                    return (
+                      <div key={pl} className="glass rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <p className="text-xs font-semibold text-text-primary">{pl}</p>
+                            {latest && (
+                              <p className="text-lg font-bold text-text-primary">{latest.followers.toLocaleString("en-IN")}</p>
+                            )}
+                          </div>
+                          {followerGrowth !== 0 && (
+                            <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded", followerGrowth > 0 ? "text-accent-bright bg-accent-dim" : "text-red-400 bg-red-400/10")}>
+                              {followerGrowth > 0 ? "+" : ""}{followerGrowth}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-end gap-0.5 h-12">
+                          {plSnaps.map((s, i) => (
+                            <div
+                              key={i}
+                              className={cn("flex-1 rounded-sm", i === plSnaps.length - 1 ? "bg-accent" : "bg-surface-2")}
+                              style={{ height: `${Math.max((s.followers / maxF) * 100, 4)}%` }}
+                              title={`${s.date}: ${s.followers.toLocaleString("en-IN")} followers`}
+                            />
+                          ))}
+                        </div>
+                        {latest?.engagement > 0 && (
+                          <p className="text-[10px] text-muted mt-2">{latest.engagement}% engagement</p>
+                        )}
+                        <p className="text-[10px] text-muted">{plSnaps.length} snapshots logged</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
         )}
       </div>

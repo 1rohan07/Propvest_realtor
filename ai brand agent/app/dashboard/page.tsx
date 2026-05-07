@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
-  getProfile, getRevenue, getHabits, getTasks, getFounderMode,
+  getProfile, getRevenue, getHabits, getTasks, getFounderMode, getLastWeeklyReview,
   FounderProfile, RevenueEntry, HabitEntry, Task, FounderMode,
 } from "@/lib/storage";
 import { formatCurrency, greet, today } from "@/lib/utils";
@@ -13,10 +13,11 @@ import { generateInsights, generatePriorities } from "@/lib/insights";
 import { MODES } from "@/components/dashboard/ModeSelector";
 import InsightsFeed from "@/components/dashboard/InsightsFeed";
 import TopBar from "@/components/dashboard/TopBar";
+import WeeklyReview from "@/components/dashboard/WeeklyReview";
 import { cn } from "@/lib/utils";
 import {
   TrendingUp, Zap, Target, Activity, ChevronRight,
-  GitBranch, Bot, Brain, Flame, ArrowRight, Link2,
+  GitBranch, Bot, Brain, Flame, ArrowRight, Link2, Calendar,
 } from "lucide-react";
 
 const URGENCY_CONFIG = {
@@ -115,6 +116,7 @@ export default function DashboardPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [mode, setMode] = useState<FounderMode>("growth");
   const [loaded, setLoaded] = useState(false);
+  const [showWeeklyReview, setShowWeeklyReview] = useState(false);
 
   useEffect(() => {
     setProfile(getProfile());
@@ -123,6 +125,18 @@ export default function DashboardPage() {
     setTasks(getTasks());
     setMode(getFounderMode());
     setLoaded(true);
+
+    // Auto-show weekly review on Mondays if not shown this week
+    const dayOfWeek = new Date().getDay(); // 1 = Monday
+    if (dayOfWeek === 1) {
+      const lastReview = getLastWeeklyReview();
+      const thisMonday = new Date();
+      thisMonday.setDate(thisMonday.getDate() - (thisMonday.getDay() - 1));
+      const thisMondayStr = thisMonday.toISOString().slice(0, 10);
+      if (!lastReview || lastReview < thisMondayStr) {
+        setTimeout(() => setShowWeeklyReview(true), 800);
+      }
+    }
   }, []);
 
   const todayStr = today();
@@ -158,6 +172,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col min-h-screen hero-gradient">
       <TopBar />
+      {showWeeklyReview && <WeeklyReview onDismiss={() => setShowWeeklyReview(false)} />}
 
       <div className="flex-1 p-6 lg:p-8 space-y-8 max-w-[1400px] w-full mx-auto">
 
@@ -314,6 +329,19 @@ export default function DashboardPage() {
                     </div>
                   </Link>
                 ))}
+                <button
+                  onClick={() => setShowWeeklyReview(true)}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border border-border hover:border-border/60 hover:bg-surface-2 transition-all hover-lift group"
+                >
+                  <div className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 bg-surface-2">
+                    <Calendar size={12} className="text-muted" />
+                  </div>
+                  <div className="min-w-0 flex-1 text-left">
+                    <p className="text-xs font-medium text-text-secondary group-hover:text-text-primary">Weekly Review</p>
+                    <p className="text-[10px] text-muted">This week's performance recap</p>
+                  </div>
+                  <ChevronRight size={11} className="text-muted flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                </button>
               </div>
             </div>
 

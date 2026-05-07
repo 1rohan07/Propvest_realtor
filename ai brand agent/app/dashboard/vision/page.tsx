@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getGoals, setGoals } from "@/lib/storage";
+import { getGoals, setGoals, getTasks } from "@/lib/storage";
 import TopBar from "@/components/dashboard/TopBar";
 import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
 import { Target as VisionIcon } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { cn } from "@/lib/utils";
-import { Target, Plus, Trash2 } from "lucide-react";
+import { Target, Plus, Trash2, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Goal {
+  id?: string;
   title: string;
   target: string;
   deadline: string;
@@ -20,39 +21,87 @@ interface Goal {
 
 const CATEGORIES = ["Revenue", "Brand", "Product", "Personal", "Team", "Health", "Learning"];
 
+function daysUntilDeadline(deadline: string): number | null {
+  if (!deadline) return null;
+  const diff = new Date(deadline).getTime() - new Date().setHours(0, 0, 0, 0);
+  return Math.ceil(diff / 86400000);
+}
+
+function getGoalStatus(goal: Goal): "complete" | "on-track" | "at-risk" | "overdue" {
+  if (goal.progress >= 100) return "complete";
+  const days = daysUntilDeadline(goal.deadline);
+  if (days === null) return "on-track";
+  if (days < 0) return "overdue";
+  if (!goal.deadline) return "on-track";
+  const totalDays = (new Date(goal.deadline).getTime() - new Date(goal.deadline.slice(0, 7) + "-01").getTime()) / 86400000;
+  const expectedProgress = Math.max(0, Math.min(100, ((totalDays - days) / totalDays) * 100));
+  return goal.progress >= expectedProgress - 15 ? "on-track" : "at-risk";
+}
+
+const STATUS_CONFIG = {
+  complete:  { label: "Complete",  color: "text-accent-bright border-accent/30 bg-accent-dim", icon: CheckCircle2 },
+  "on-track":{ label: "On Track",  color: "text-blue-400 border-blue-400/30 bg-blue-400/10",   icon: Clock },
+  "at-risk": { label: "At Risk",   color: "text-yellow-400 border-yellow-400/30 bg-yellow-400/10", icon: AlertTriangle },
+  overdue:   { label: "Overdue",   color: "text-red-400 border-red-400/30 bg-red-400/10",      icon: AlertTriangle },
+};
+
+function classifyGoal(g: Goal): "sprint" | "plan" | "vision" | "none" {
+  const days = daysUntilDeadline(g.deadline);
+  if (days === null) return "none";
+  if (days < 0) return "sprint"; // overdue still shows in sprint
+  if (days <= 30) return "sprint";
+  if (days <= 90) return "plan";
+  return "vision";
+}
+
+const TIMELINE_TABS = [
+  { key: "all",    label: "All Goals" },
+  { key: "sprint", label: "30-Day Sprint" },
+  { key: "plan",   label: "90-Day Plan" },
+  { key: "vision", label: "1-Year Vision" },
+  { key: "none",   label: "No Deadline" },
+] as const;
+
 export default function VisionPage() {
   const [goals, setLocalGoals] = useState<Goal[]>([]);
+  const [activeTab, setActiveTab] = useState<"all" | "sprint" | "plan" | "vision" | "none">("all");
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ title: "", target: "", deadline: "", progress: 0, category: "Revenue" });
+  const [linkedTaskCounts, setLinkedTaskCounts] = useState<Record<string, number>>({});
 
-  useEffect(() => { setLocalGoals(getGoals() as Goal[]); }, []);
+  useEffect(() => {
+    const gs = (getGoals() as Goal[]).map((g, i) => ({ ...g, id: g.id ?? String(i) }));
+    setLocalGoals(gs);
+    // Count tasks linked to each goal
+    const allTasks = getTasks();
+    const counts: Record<string, number> = {};
+    for (const t of allTasks) {
+      if (t.goalId) counts[t.goalId] = (counts[t.goalId] ?? 0) + 1;
+    }
+    setLinkedTaskCounts(counts);
+  }, []);
+
+  const save = (updated: Goal[]) => {
+    setLocalGoals(updated);
+    setGoals(updated);
+  };
 
   const add = () => {
     if (!form.title) return;
-    const updated = [...goals, form];
-    setLocalGoals(updated);
-    setGoals(updated);
+    const newGoal: Goal = { ...form, id: Date.now().toString() };
+    save([...goals, newGoal]);
     setForm({ title: "", target: "", deadline: "", progress: 0, category: "Revenue" });
     setShowAdd(false);
   };
 
-  const updateProgress = (i: number, progress: number) => {
-    const updated = goals.map((g, idx) => idx === i ? { ...g, progress } : g);
-    setLocalGoals(updated);
-    setGoals(updated);
-  };
+  const updateProgress = (id: string, progress: number) =>
+    save(goals.map((g) => g.id === id ? { ...g, progress } : g));
 
-  const remove = (i: number) => {
-    const updated = goals.filter((_, idx) => idx !== i);
-    setLocalGoals(updated);
-    setGoals(updated);
-  };
+  const remove = (id: string) => save(goals.filter((g) => g.id !== id));
 
-  const TIMELINE = [
-    { label: "30-Day Sprint", goals: goals.filter((g) => g.category !== "Personal").slice(0, 2) },
-    { label: "90-Day Plan", goals: goals.filter((g) => g.category === "Revenue") },
-    { label: "1-Year Vision", goals: goals },
-  ];
+  const filtered = activeTab === "all"
+    ? goals
+    : goals.filter((g) => classifyGoal(g) === activeTab);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -63,6 +112,30 @@ export default function VisionPage() {
           <button onClick={() => setShowAdd(!showAdd)} className="flex items-center gap-2 bg-accent text-white text-sm px-4 py-2 rounded-lg hover:bg-accent-bright transition-colors">
             <Plus size={14} /> Add Goal
           </button>
+        </div>
+
+        {/* Timeline tabs */}
+        <div className="flex gap-1.5 flex-wrap">
+          {TIMELINE_TABS.map((tab) => {
+            const count = tab.key === "all"
+              ? goals.length
+              : goals.filter((g) => classifyGoal(g) === tab.key).length;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={cn(
+                  "text-xs px-3 py-1.5 rounded-full border transition-colors flex items-center gap-1",
+                  activeTab === tab.key
+                    ? "border-accent bg-accent-dim text-accent-bright"
+                    : "border-border text-muted hover:text-text-primary"
+                )}
+              >
+                {tab.label}
+                <span className={cn("text-[9px] px-1 rounded-full", activeTab === tab.key ? "bg-accent/30" : "bg-surface-2")}>{count}</span>
+              </button>
+            );
+          })}
         </div>
 
         {showAdd && (
@@ -100,43 +173,76 @@ export default function VisionPage() {
           </motion.div>
         )}
 
-        {goals.length === 0 ? (
+        {filtered.length === 0 ? (
           <div className="glass rounded-xl p-8 text-center">
             <Target size={24} className="text-muted mx-auto mb-3" />
-            <p className="text-sm text-muted">No goals set yet. Add your first goal to start tracking your vision.</p>
+            <p className="text-sm text-muted">
+              {activeTab === "all" ? "No goals set yet. Add your first goal to start tracking your vision." : `No goals in this timeframe. Add a goal with a matching deadline.`}
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
-            {goals.map((g, i) => (
-              <div key={i} className="glass rounded-xl p-5">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] text-muted border border-border rounded px-1.5 py-0.5">{g.category}</span>
-                      {g.deadline && <span className="text-[10px] text-muted">Due: {g.deadline}</span>}
+            {filtered.map((g) => {
+              const days = daysUntilDeadline(g.deadline);
+              const status = getGoalStatus(g);
+              const cfg = STATUS_CONFIG[status];
+              const StatusIcon = cfg.icon;
+              const taskCount = linkedTaskCounts[g.id ?? ""] ?? 0;
+
+              return (
+                <motion.div
+                  key={g.id ?? g.title}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass rounded-xl p-5"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1 min-w-0 mr-4">
+                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                        <span className="text-[10px] text-muted border border-border rounded px-1.5 py-0.5">{g.category}</span>
+                        <span className={cn("text-[10px] flex items-center gap-1 px-1.5 py-0.5 rounded border", cfg.color)}>
+                          <StatusIcon size={8} /> {cfg.label}
+                        </span>
+                        {days !== null && (
+                          <span className={cn(
+                            "text-[10px] font-medium",
+                            days < 0 ? "text-red-400" : days <= 7 ? "text-yellow-400" : "text-muted"
+                          )}>
+                            {days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? "Due today" : `${days}d left`}
+                          </span>
+                        )}
+                        {taskCount > 0 && (
+                          <span className="text-[10px] text-accent-bright border border-accent/30 bg-accent-dim px-1.5 py-0.5 rounded">
+                            {taskCount} task{taskCount > 1 ? "s" : ""} linked
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm font-semibold text-text-primary">{g.title}</p>
+                      {g.target && <p className="text-xs text-muted mt-0.5">Target: {g.target}</p>}
                     </div>
-                    <p className="text-sm font-semibold text-text-primary">{g.title}</p>
-                    {g.target && <p className="text-xs text-muted mt-0.5">Target: {g.target}</p>}
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <span className="text-sm font-semibold text-accent-bright">{g.progress}%</span>
+                      <button onClick={() => remove(g.id ?? "")} className="text-muted hover:text-red-400 transition-colors">
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-accent-bright">{g.progress}%</span>
-                    <button onClick={() => remove(i)} className="text-muted hover:text-red-400 transition-colors">
-                      <Trash2 size={13} />
-                    </button>
+                    <div className="flex-1 h-1.5 bg-surface-2 rounded-full overflow-hidden">
+                      <div
+                        className={cn("h-full rounded-full transition-all", status === "overdue" ? "bg-red-400" : status === "at-risk" ? "bg-yellow-400" : "bg-accent")}
+                        style={{ width: `${g.progress}%` }}
+                      />
+                    </div>
+                    <input
+                      type="range" min={0} max={100} value={g.progress}
+                      onChange={(e) => updateProgress(g.id ?? "", parseInt(e.target.value))}
+                      className="w-20 accent-accent h-1 cursor-pointer"
+                    />
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 h-1.5 bg-surface-2 rounded-full overflow-hidden">
-                    <div className="h-full bg-accent rounded-full transition-all" style={{ width: `${g.progress}%` }} />
-                  </div>
-                  <input
-                    type="range" min={0} max={100} value={g.progress}
-                    onChange={(e) => updateProgress(i, parseInt(e.target.value))}
-                    className="w-20 accent-accent h-1 cursor-pointer"
-                  />
-                </div>
-              </div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -145,9 +251,9 @@ export default function VisionPage() {
         agentName="Vision & Strategy Agent"
         badge="PRO"
         agentIcon={<VisionIcon size={13} className="text-white" />}
-        systemPrompt={`You are a world-class strategy architect, venture builder, and long-term vision coach who has helped founders scale from zero to crore. You replace expensive strategy consultants and board advisors.
-Current goals tracked: ${goals.map((g) => g.title + " → " + g.target + " (" + g.progress + "% done, deadline: " + (g.deadline || "none") + ")").join("; ") || "no goals set yet"}.
-RULES: Be visionary but brutally grounded. Give structured strategic frameworks, not generic inspiration. Always produce deliverables — plans, frameworks, roadmaps — that the founder can act on immediately. Structure every response with clear headers, timelines, and specific metrics.`}
+        systemPrompt={`You are a world-class strategy architect, venture builder, and long-term vision coach who has helped founders scale from zero to crore.
+Current goals: ${goals.map((g) => `${g.title} → ${g.target} (${g.progress}% done, ${daysUntilDeadline(g.deadline) ?? "no"} days left, status: ${getGoalStatus(g)})`).join("; ") || "no goals set yet"}.
+RULES: Be visionary but brutally grounded. Give structured strategic frameworks, not generic inspiration. Always produce deliverables — plans, frameworks, roadmaps — that the founder can act on immediately.`}
         quickActions={[
           { label: "Build my complete 90-day strategic plan", prompt: "Build a complete 90-day strategic plan for my business. Structure it as: Month 1 (Foundation) with week-by-week priorities, Month 2 (Acceleration) with specific milestones, Month 3 (Scale) with targets. Include the 3 non-negotiable outcomes for each month, the key constraints I must solve, and what success looks like on Day 90.", category: "Planning" },
           { label: "Define my 1-year vision (measurable + specific)", prompt: "Help me define my 1-year vision across 5 dimensions: Revenue (specific number + how), Brand (reach, recognition, positioning), Product (what we'll have built), Team (who is on the team and in what roles), and Personal (how I'll have grown as a founder). Make every goal specific, measurable, and time-bound.", category: "Planning" },

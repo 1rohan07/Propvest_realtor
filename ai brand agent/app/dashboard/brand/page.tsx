@@ -2,31 +2,83 @@
 
 import { useEffect, useState } from "react";
 import { getProfile } from "@/lib/storage";
-import { FounderProfile } from "@/lib/storage";
+import {
+  getBrandNotes, setBrandNotes, getBrandChecklist, setBrandChecklist, BrandNotes,
+  getCompetitorLog, setCompetitorLog, CompetitorEntry,
+} from "@/lib/storage";
 import TopBar from "@/components/dashboard/TopBar";
 import EmbeddedAgent from "@/components/agents/EmbeddedAgent";
-import { Sparkles as SparkIcon } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Sparkles, Plus, Trash2, Check, Swords } from "lucide-react";
+import { motion } from "framer-motion";
+import { today } from "@/lib/utils";
+
+const CHECKLIST_ITEMS = [
+  "Clear brand positioning statement",
+  "Consistent visual identity",
+  "Defined target audience",
+  "Unique brand voice",
+  "Strong hero product / service",
+  "Social proof & testimonials",
+  "Website with clear CTA",
+  "Content strategy in place",
+];
 
 export default function BrandPage() {
-  const [profile, setProfile] = useState<FounderProfile | null>(null);
-  const [notes, setNotes] = useState({ positioning: "", voice: "", differentiators: "", competitors: "" });
+  const [profile, setProfile] = useState<ReturnType<typeof getProfile>>(null);
+  const [notes, setNotes] = useState<BrandNotes>({ positioning: "", voice: "", differentiators: "", competitors: "" });
+  const [checklist, setChecklist] = useState<Record<string, boolean>>({});
+  const [savedNote, setSavedNote] = useState<string | null>(null);
+  const [competitors, setLocalCompetitors] = useState<CompetitorEntry[]>([]);
+  const [showAddComp, setShowAddComp] = useState(false);
+  const [compForm, setCompForm] = useState({ name: "", pricing: "", latestMove: "", ourResponse: "" });
 
   useEffect(() => {
     const p = getProfile();
     setProfile(p);
-    if (p) {
-      setNotes({
-        positioning: p.brandPositioning ?? "",
-        voice: "",
-        differentiators: "",
-        competitors: p.competitors ?? "",
-      });
-    }
+    const savedNotes = getBrandNotes();
+    // Pre-fill from profile if brand_notes is empty
+    setNotes({
+      positioning: savedNotes.positioning || p?.brandPositioning || "",
+      voice: savedNotes.voice || "",
+      differentiators: savedNotes.differentiators || "",
+      competitors: savedNotes.competitors || p?.competitors || "",
+    });
+    setChecklist(getBrandChecklist());
+    setLocalCompetitors(getCompetitorLog());
   }, []);
 
-  const set = (k: string, v: string) => setNotes((p) => ({ ...p, [k]: v }));
+  const handleNoteBlur = (key: keyof BrandNotes, value: string) => {
+    const updated = { ...notes, [key]: value };
+    setBrandNotes(updated);
+    setSavedNote(key);
+    setTimeout(() => setSavedNote(null), 1500);
+  };
+
+  const toggleCheck = (item: string) => {
+    const updated = { ...checklist, [item]: !checklist[item] };
+    setChecklist(updated);
+    setBrandChecklist(updated);
+  };
+
+  const addCompetitor = () => {
+    if (!compForm.name) return;
+    const entry: CompetitorEntry = { id: Date.now().toString(), ...compForm, date: today() };
+    const updated = [entry, ...competitors];
+    setLocalCompetitors(updated);
+    setCompetitorLog(updated);
+    setCompForm({ name: "", pricing: "", latestMove: "", ourResponse: "" });
+    setShowAddComp(false);
+  };
+
+  const removeCompetitor = (id: string) => {
+    const updated = competitors.filter((c) => c.id !== id);
+    setLocalCompetitors(updated);
+    setCompetitorLog(updated);
+  };
+
+  const checkedCount = CHECKLIST_ITEMS.filter((item) => checklist[item]).length;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -34,22 +86,31 @@ export default function BrandPage() {
       <div className="flex-1 p-6 space-y-6">
         <SectionHeader title="Brand Manager" subtitle="Define and track your brand identity, voice, and competitive position" />
 
+        {/* Brand notes — 2 col grid */}
         <div className="grid grid-cols-2 gap-4">
-          {[
-            { key: "positioning", label: "Brand Positioning", placeholder: "What do you stand for? Who is it for?" },
-            { key: "voice", label: "Brand Voice & Tone", placeholder: "e.g. Bold, aspirational, grounded, premium" },
-            { key: "differentiators", label: "Key Differentiators", placeholder: "What makes you different from competitors?" },
-            { key: "competitors", label: "Top Competitors", placeholder: "Who are you competing with?" },
-          ].map(({ key, label, placeholder }) => (
+          {([
+            { key: "positioning" as const, label: "Brand Positioning", placeholder: "What do you stand for? Who is it for?" },
+            { key: "voice" as const, label: "Brand Voice & Tone", placeholder: "e.g. Bold, aspirational, grounded, premium" },
+            { key: "differentiators" as const, label: "Key Differentiators", placeholder: "What makes you different from competitors?" },
+            { key: "competitors" as const, label: "Top Competitors", placeholder: "Who are you competing with?" },
+          ]).map(({ key, label, placeholder }) => (
             <div key={key} className="glass rounded-xl p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles size={13} className="text-accent-bright" />
-                <h3 className="text-sm font-semibold text-text-primary">{label}</h3>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={13} className="text-accent-bright" />
+                  <h3 className="text-sm font-semibold text-text-primary">{label}</h3>
+                </div>
+                {savedNote === key && (
+                  <span className="text-[10px] text-accent-bright flex items-center gap-1">
+                    <Check size={9} /> Saved
+                  </span>
+                )}
               </div>
               <textarea
                 rows={4}
-                value={(notes as any)[key]}
-                onChange={(e) => set(key, e.target.value)}
+                value={notes[key]}
+                onChange={(e) => setNotes((p) => ({ ...p, [key]: e.target.value }))}
+                onBlur={(e) => handleNoteBlur(key, e.target.value)}
                 placeholder={placeholder}
                 className="resize-none text-sm"
               />
@@ -57,38 +118,126 @@ export default function BrandPage() {
           ))}
         </div>
 
+        {/* Brand health checklist */}
         <div className="glass rounded-xl p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-3">Brand Health Checklist</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-text-primary">Brand Health Checklist</h3>
+            <span className={cn(
+              "text-xs font-semibold px-2 py-0.5 rounded-full",
+              checkedCount === CHECKLIST_ITEMS.length
+                ? "bg-accent-dim text-accent-bright"
+                : "text-muted"
+            )}>
+              {checkedCount}/{CHECKLIST_ITEMS.length} complete
+            </span>
+          </div>
           <div className="grid grid-cols-2 gap-3">
-            {[
-              "Clear brand positioning statement",
-              "Consistent visual identity",
-              "Defined target audience",
-              "Unique brand voice",
-              "Strong hero product / service",
-              "Social proof & testimonials",
-              "Website with clear CTA",
-              "Content strategy in place",
-            ].map((item) => (
-              <label key={item} className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" className="w-3.5 h-3.5 accent-accent rounded" />
-                <span className="text-xs text-text-secondary">{item}</span>
-              </label>
+            {CHECKLIST_ITEMS.map((item) => (
+              <button
+                key={item}
+                onClick={() => toggleCheck(item)}
+                className="flex items-center gap-2 text-left group"
+              >
+                <div className={cn(
+                  "w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-colors",
+                  checklist[item] ? "bg-accent border-accent" : "border-border group-hover:border-accent/60"
+                )}>
+                  {checklist[item] && <Check size={9} className="text-white" />}
+                </div>
+                <span className={cn("text-xs transition-colors", checklist[item] ? "text-text-primary line-through" : "text-text-secondary")}>
+                  {item}
+                </span>
+              </button>
             ))}
           </div>
+        </div>
+
+        {/* Competitor tracker */}
+        <div className="glass rounded-xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Swords size={13} className="text-accent-bright" />
+              <h3 className="text-sm font-semibold text-text-primary">Competitor Intelligence</h3>
+            </div>
+            <button
+              onClick={() => setShowAddComp(!showAddComp)}
+              className="flex items-center gap-1.5 text-xs text-accent-bright hover:text-accent-bright/80 border border-accent/30 px-2.5 py-1 rounded-lg bg-accent-dim transition-colors"
+            >
+              <Plus size={11} /> Track Competitor
+            </button>
+          </div>
+
+          {showAddComp && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid grid-cols-2 gap-3 mb-4 p-4 bg-surface-2 rounded-xl border border-border"
+            >
+              <div>
+                <label className="block text-[10px] text-muted mb-1">Competitor Name</label>
+                <input value={compForm.name} onChange={(e) => setCompForm((p) => ({ ...p, name: e.target.value }))} placeholder="Brand name" className="text-sm" />
+              </div>
+              <div>
+                <label className="block text-[10px] text-muted mb-1">Their Pricing</label>
+                <input value={compForm.pricing} onChange={(e) => setCompForm((p) => ({ ...p, pricing: e.target.value }))} placeholder="e.g. ₹999–₹4,999" className="text-sm" />
+              </div>
+              <div>
+                <label className="block text-[10px] text-muted mb-1">Latest Move</label>
+                <input value={compForm.latestMove} onChange={(e) => setCompForm((p) => ({ ...p, latestMove: e.target.value }))} placeholder="e.g. Launched ambassador program" className="text-sm" />
+              </div>
+              <div>
+                <label className="block text-[10px] text-muted mb-1">Our Response</label>
+                <input value={compForm.ourResponse} onChange={(e) => setCompForm((p) => ({ ...p, ourResponse: e.target.value }))} placeholder="How we respond or differentiate" className="text-sm" />
+              </div>
+              <div className="col-span-2 flex gap-2">
+                <button onClick={addCompetitor} className="bg-accent text-white text-xs px-4 py-1.5 rounded-lg hover:bg-accent-bright">Save</button>
+                <button onClick={() => setShowAddComp(false)} className="text-muted text-xs px-3 py-1.5 rounded-lg border border-border">Cancel</button>
+              </div>
+            </motion.div>
+          )}
+
+          {competitors.length === 0 ? (
+            <p className="text-xs text-muted text-center py-4">No competitors tracked yet. Add one to build your competitive intelligence.</p>
+          ) : (
+            <div className="space-y-3">
+              {competitors.map((c) => (
+                <div key={c.id} className="grid grid-cols-4 gap-3 p-3 bg-surface-2 rounded-xl border border-border group">
+                  <div>
+                    <p className="text-[10px] text-muted mb-0.5">Competitor</p>
+                    <p className="text-xs font-semibold text-text-primary">{c.name}</p>
+                    <p className="text-[10px] text-muted mt-0.5">{c.pricing}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="text-[10px] text-muted mb-0.5">Latest Move</p>
+                    <p className="text-xs text-text-secondary leading-snug">{c.latestMove || "—"}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="text-[10px] text-muted mb-0.5">Our Response</p>
+                    <p className="text-xs text-text-secondary leading-snug">{c.ourResponse || "—"}</p>
+                  </div>
+                  <div className="flex items-start justify-end">
+                    <button onClick={() => removeCompetitor(c.id)} className="opacity-0 group-hover:opacity-100 text-muted hover:text-red-400 transition-all">
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       <EmbeddedAgent
         agentName="Brand Strategy Agent"
         badge="PRO"
-        agentIcon={<SparkIcon size={13} className="text-white" />}
+        agentIcon={<Sparkles size={13} className="text-white" />}
         systemPrompt={`You are a world-class brand strategist, positioning expert, and creative director with deep expertise in premium Indian consumer brands, D2C, and personal branding.
 You replace expensive brand agencies and consulting firms. You think like the strategists who built Boat, Mamaearth, Bombay Shaving Company, and Lenskart.
 Brand positioning: ${notes.positioning || "not defined yet"}.
 Brand voice: ${notes.voice || "not defined yet"}.
 Key differentiators: ${notes.differentiators || "not defined yet"}.
 Competitors: ${notes.competitors || "not defined yet"}.
+Tracked competitor moves: ${competitors.map((c) => `${c.name} (${c.latestMove})`).join(", ") || "none tracked"}.
 RULES: Give complete brand deliverables — not advice. Always produce copy, frameworks, and strategy documents the founder can use immediately. Every response should be structured and professional.`}
         quickActions={[
           { label: "Write my brand positioning statement", prompt: "Write 3 versions of my brand positioning statement — one for investors (clear, market-focused), one for customers (emotional, benefit-focused), and one internal north star. For each, explain why it works and who it's designed to resonate with.", category: "Identity" },
